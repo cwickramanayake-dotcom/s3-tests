@@ -119,11 +119,8 @@ def parse_s3_errorcode(error_xml):
 
 @attr(resource='bucket')
 @attr(method='get')
+@attr(operation='list')
 @attr(assertion='empty buckets return no contents')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_empty():
     bucket = get_new_bucket()
     l = bucket.list()
@@ -134,10 +131,6 @@ def test_bucket_list_empty():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='distinct buckets have different contents')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_distinct():
     bucket1 = get_new_bucket()
     bucket2 = get_new_bucket()
@@ -185,10 +178,6 @@ def _get_alt_connection():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='pagination w/max_keys=2, no marker')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_many():
     bucket = _create_keys(keys=['foo', 'bar', 'baz'])
 
@@ -213,10 +202,6 @@ def test_bucket_list_many():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='prefixes in multi-component object names')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_basic():
     bucket = _create_keys(keys=['foo/bar', 'foo/baz/xyzzy', 'quux/thud', 'asdf'])
 
@@ -294,10 +279,6 @@ def test_bucket_list_delimiter_prefix():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='prefix and delimiter handling when object ends with delimiter')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_prefix_ends_with_delimiter():
     bucket = _create_keys(keys=['asdf/'])
     validate_bucket_list(bucket, 'asdf/', '/', '', 1000, False, ['asdf/'], [], None)
@@ -306,10 +287,6 @@ def test_bucket_list_delimiter_prefix_ends_with_delimiter():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='non-slash delimiter characters')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_alt():
     bucket = _create_keys(keys=['bar', 'baz', 'cab', 'foo'])
 
@@ -330,10 +307,6 @@ def test_bucket_list_delimiter_alt():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='prefixes starting with underscore')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_prefix_underscore():
     bucket = _create_keys(keys=['_obj1_','_under1/bar', '_under1/baz/xyzzy', '_under2/thud', '_under2/bla'])
 
@@ -358,10 +331,6 @@ def test_bucket_list_delimiter_prefix_underscore():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='percentage delimiter characters')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_percentage():
     bucket = _create_keys(keys=['b%ar', 'b%az', 'c%ab', 'foo'])
 
@@ -383,10 +352,6 @@ def test_bucket_list_delimiter_percentage():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='whitespace delimiter characters')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_whitespace():
     bucket = _create_keys(keys=['b ar', 'b az', 'c ab', 'foo'])
 
@@ -408,10 +373,6 @@ def test_bucket_list_delimiter_whitespace():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='dot delimiter characters')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_dot():
     bucket = _create_keys(keys=['b.ar', 'b.az', 'c.ab', 'foo'])
 
@@ -433,10 +394,6 @@ def test_bucket_list_delimiter_dot():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='non-printable delimiter can be specified')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_unreadable():
     key_names = ['bar', 'baz', 'cab', 'foo']
     bucket = _create_keys(keys=key_names)
@@ -454,10 +411,6 @@ def test_bucket_list_delimiter_unreadable():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='empty delimiter can be specified')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_empty():
     key_names = ['bar', 'baz', 'cab', 'foo']
     bucket = _create_keys(keys=key_names)
@@ -476,10 +429,6 @@ def test_bucket_list_delimiter_empty():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='unspecified delimiter defaults to none')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_none():
     key_names = ['bar', 'baz', 'cab', 'foo']
     bucket = _create_keys(keys=key_names)
@@ -497,10 +446,6 @@ def test_bucket_list_delimiter_none():
 @attr(method='get')
 @attr(operation='list')
 @attr(assertion='unused delimiter is not found')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_delimiter_not_exist():
     key_names = ['bar', 'baz', 'cab', 'foo']
     bucket = _create_keys(keys=key_names)
@@ -518,10 +463,6 @@ def test_bucket_list_delimiter_not_exist():
 @attr(method='get')
 @attr(operation='list under prefix')
 @attr(assertion='returns only objects under prefix')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_basic():
     bucket = _create_keys(keys=['foo/bar', 'foo/baz', 'quux'])
 
@@ -539,10 +480,6 @@ def test_bucket_list_prefix_basic():
 @attr(method='get')
 @attr(operation='list under prefix')
 @attr(assertion='prefixes w/o delimiters')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_alt():
     bucket = _create_keys(keys=['bar', 'baz', 'foo'])
 
@@ -559,10 +496,6 @@ def test_bucket_list_prefix_alt():
 @attr(method='get')
 @attr(operation='list under prefix')
 @attr(assertion='empty prefix returns everything')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_empty():
     key_names = ['foo/bar', 'foo/baz', 'quux']
     bucket = _create_keys(keys=key_names)
@@ -580,10 +513,6 @@ def test_bucket_list_prefix_empty():
 @attr(method='get')
 @attr(operation='list under prefix')
 @attr(assertion='unspecified prefix returns everything')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_none():
     key_names = ['foo/bar', 'foo/baz', 'quux']
     bucket = _create_keys(keys=key_names)
@@ -601,10 +530,6 @@ def test_bucket_list_prefix_none():
 @attr(method='get')
 @attr(operation='list under prefix')
 @attr(assertion='nonexistent prefix returns nothing')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_not_exist():
     bucket = _create_keys(keys=['foo/bar', 'foo/baz', 'quux'])
 
@@ -620,10 +545,6 @@ def test_bucket_list_prefix_not_exist():
 @attr(method='get')
 @attr(operation='list under prefix')
 @attr(assertion='non-printable prefix can be specified')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_unreadable():
     # FIX: shouldn't this test include strings that start with the tested prefix
     bucket = _create_keys(keys=['foo/bar', 'foo/baz', 'quux'])
@@ -640,10 +561,6 @@ def test_bucket_list_prefix_unreadable():
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
 @attr(assertion='returns only objects directly under prefix')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_delimiter_basic():
     bucket = _create_keys(keys=['foo/bar', 'foo/baz/xyzzy', 'quux/thud', 'asdf'])
 
@@ -663,10 +580,6 @@ def test_bucket_list_prefix_delimiter_basic():
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
 @attr(assertion='non-slash delimiters')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_delimiter_alt():
     bucket = _create_keys(keys=['bar', 'bazar', 'cab', 'foo'])
 
@@ -686,10 +599,6 @@ def test_bucket_list_prefix_delimiter_alt():
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
 @attr(assertion='finds nothing w/unmatched prefix')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_delimiter_prefix_not_exist():
     bucket = _create_keys(keys=['b/a/r', 'b/a/c', 'b/a/g', 'g'])
 
@@ -704,10 +613,6 @@ def test_bucket_list_prefix_delimiter_prefix_not_exist():
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
 @attr(assertion='over-ridden slash ceases to be a delimiter')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_delimiter_delimiter_not_exist():
     bucket = _create_keys(keys=['b/a/c', 'b/a/g', 'b/a/r', 'g'])
 
@@ -723,10 +628,6 @@ def test_bucket_list_prefix_delimiter_delimiter_not_exist():
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
 @attr(assertion='finds nothing w/unmatched prefix and delimiter')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_prefix_delimiter_prefix_delimiter_not_exist():
     bucket = _create_keys(keys=['b/a/c', 'b/a/g', 'b/a/r', 'g'])
 
@@ -741,10 +642,6 @@ def test_bucket_list_prefix_delimiter_prefix_delimiter_not_exist():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='pagination w/max_keys=1, marker')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_maxkeys_one():
     key_names = ['bar', 'baz', 'foo', 'quxx']
     bucket = _create_keys(keys=key_names)
@@ -765,10 +662,6 @@ def test_bucket_list_maxkeys_one():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='pagination w/max_keys=0')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_maxkeys_zero():
     bucket = _create_keys(keys=['bar', 'baz', 'foo', 'quxx'])
 
@@ -781,10 +674,6 @@ def test_bucket_list_maxkeys_zero():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='pagination w/o max_keys')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_maxkeys_none():
     key_names = ['bar', 'baz', 'foo', 'quxx']
     bucket = _create_keys(keys=key_names)
@@ -800,10 +689,6 @@ def test_bucket_list_maxkeys_none():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='invalid max_keys')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_maxkeys_invalid():
     bucket = _create_keys(keys=['bar', 'baz', 'foo', 'quxx'])
 
@@ -818,10 +703,6 @@ def test_bucket_list_maxkeys_invalid():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='non-printing max_keys')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_maxkeys_unreadable():
     bucket = _create_keys(keys=['bar', 'baz', 'foo', 'quxx'])
 
@@ -838,10 +719,6 @@ def test_bucket_list_maxkeys_unreadable():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='no pagination, no marker')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_none():
     key_names = ['bar', 'baz', 'foo', 'quxx']
     bucket = _create_keys(keys=key_names)
@@ -854,10 +731,6 @@ def test_bucket_list_marker_none():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='no pagination, empty marker')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_empty():
     key_names = ['bar', 'baz', 'foo', 'quxx']
     bucket = _create_keys(keys=key_names)
@@ -873,10 +746,6 @@ def test_bucket_list_marker_empty():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='non-printing marker')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_unreadable():
     key_names = ['bar', 'baz', 'foo', 'quxx']
     bucket = _create_keys(keys=key_names)
@@ -892,10 +761,6 @@ def test_bucket_list_marker_unreadable():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='marker not-in-list')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_not_in_list():
     bucket = _create_keys(keys=['bar', 'baz', 'foo', 'quxx'])
 
@@ -909,10 +774,6 @@ def test_bucket_list_marker_not_in_list():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='marker after list')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_after_list():
     bucket = _create_keys(keys=['bar', 'baz', 'foo', 'quxx'])
 
@@ -926,10 +787,6 @@ def test_bucket_list_marker_after_list():
 @attr(method='get')
 @attr(operation='list all keys')
 @attr(assertion='marker before list')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_before_list():
     key_names = ['bar', 'baz', 'foo', 'quxx']
     bucket = _create_keys(keys=key_names)
@@ -967,10 +824,6 @@ def _compare_dates(iso_datetime, http_datetime):
 @attr(method='head')
 @attr(operation='compare w/bucket list')
 @attr(assertion='return same metadata')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_return_data():
     key_names = ['bar', 'baz', 'foo']
     bucket = _create_keys(keys=key_names)
@@ -1009,10 +862,6 @@ def test_bucket_list_return_data():
 @attr(method='head')
 @attr(operation='compare w/bucket list when bucket versioning is configured')
 @attr(assertion='return same metadata')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_return_data_versioning():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -1054,10 +903,6 @@ def test_bucket_list_return_data_versioning():
 @attr(method='get')
 @attr(operation='list keys after marker when bucket versioning is configured')
 @attr(assertion='marker list on versioning bucket')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_marker_versioning():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -1073,10 +918,6 @@ def test_bucket_list_marker_versioning():
 @attr(method='head')
 @attr(operation='modification-times')
 @attr(assertion='http and ISO-6801 times agree')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_object_time():
     bucket = _create_keys(keys=['foo'])
 
@@ -1096,10 +937,6 @@ def test_bucket_list_object_time():
 @attr(method='get')
 @attr(operation='list all objects (anonymous)')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_objects_anonymous():
     # Get a connection with bad authorization, then change it to be our new Anonymous auth mechanism,
     # emulating standard HTTP access.
@@ -1117,10 +954,6 @@ def test_bucket_list_objects_anonymous():
 @attr(method='get')
 @attr(operation='list all objects (anonymous)')
 @attr(assertion='fails')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_objects_anonymous_fail():
     # Get a connection with bad authorization, then change it to be our new Anonymous auth mechanism,
     # emulating standard HTTP access.
@@ -1140,10 +973,6 @@ def test_bucket_list_objects_anonymous_fail():
 @attr(method='get')
 @attr(operation='non-existant bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_notexist():
     # generate a (hopefully) unique, not-yet existent bucket name
     name = '{prefix}foo'.format(prefix=get_prefix())
@@ -1159,10 +988,6 @@ def test_bucket_notexist():
 @attr(method='delete')
 @attr(operation='non-existant bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_delete_notexist():
     name = '{prefix}foo'.format(prefix=get_prefix())
     print 'Trying bucket {name!r}'.format(name=name)
@@ -1175,10 +1000,6 @@ def test_bucket_delete_notexist():
 @attr(method='delete')
 @attr(operation='non-empty bucket')
 @attr(assertion='fails 409')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_delete_nonempty():
     bucket = get_new_bucket()
 
@@ -1216,11 +1037,6 @@ def _do_set_bucket_canned_acl_concurrent(bucket, canned_acl, num, results):
 @attr(method='put')
 @attr(operation='concurrent set of acls on a bucket')
 @attr(assertion='works')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_concurrent_set_canned_acl():
     bucket = get_new_bucket()
 
@@ -1240,10 +1056,6 @@ def test_bucket_concurrent_set_canned_acl():
 @attr(method='put')
 @attr(operation='non-existant bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_write_to_nonexist_bucket():
     name = '{prefix}foo'.format(prefix=get_prefix())
     print 'Trying bucket {name!r}'.format(name=name)
@@ -1259,10 +1071,6 @@ def test_object_write_to_nonexist_bucket():
 @attr(method='del')
 @attr(operation='deleted bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_delete():
     name = '{prefix}foo'.format(prefix=get_prefix())
     print 'Trying bucket {name!r}'.format(name=name)
@@ -1281,10 +1089,6 @@ def test_bucket_create_delete():
 @attr(method='get')
 @attr(operation='read contents that were never written')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_read_notexist():
     bucket = get_new_bucket()
     key = bucket.new_key('foobar')
@@ -1297,10 +1101,6 @@ def test_object_read_notexist():
 @attr(method='get')
 @attr(operation='read contents that were never written to raise one error response')
 @attr(assertion='RequestId appears in the error response')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_requestid_on_error():
     bucket = get_new_bucket()
     key = bucket.new_key('foobar')
@@ -1312,10 +1112,6 @@ def test_object_requestid_on_error():
 @attr(method='get')
 @attr(operation='read contents that were never written to raise one error response')
 @attr(assertion='RequestId in the error response matchs the x-amz-request-id in the headers')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_requestid_matchs_header_on_error():
     bucket = get_new_bucket()
     key = bucket.new_key('foobar')
@@ -1330,10 +1126,6 @@ def test_object_requestid_matchs_header_on_error():
 @attr(method='put')
 @attr(operation='write to non-printing key')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_create_unreadable():
     bucket = get_new_bucket()
     key = bucket.new_key('\x0a')
@@ -1344,10 +1136,6 @@ def test_object_create_unreadable():
 @attr(method='post')
 @attr(operation='delete multiple objects')
 @attr(assertion='deletes multiple objects with a single call')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multi_object_delete():
 	bucket = get_new_bucket()
 	key0 = bucket.new_key('key0')
@@ -1373,10 +1161,6 @@ def test_multi_object_delete():
 @attr(method='put')
 @attr(operation='write zero-byte key')
 @attr(assertion='correct content length')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_head_zero_bytes():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -1389,10 +1173,6 @@ def test_object_head_zero_bytes():
 @attr(method='put')
 @attr(operation='write key')
 @attr(assertion='correct etag')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_write_check_etag():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -1405,10 +1185,6 @@ def test_object_write_check_etag():
 @attr(method='put')
 @attr(operation='write key')
 @attr(assertion='correct cache control header')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_write_cache_control():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -1421,10 +1197,6 @@ def test_object_write_cache_control():
 @attr(method='put')
 @attr(operation='write key')
 @attr(assertion='correct expires header')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_write_expires():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -1439,10 +1211,6 @@ def test_object_write_expires():
 @attr(method='all')
 @attr(operation='complete object life cycle')
 @attr(assertion='read back what we wrote and rewrote')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_write_read_update_read_delete():
     bucket = get_new_bucket()
     # Write
@@ -1480,10 +1248,6 @@ def _set_get_metadata(metadata, bucket=None):
 @attr(method='put')
 @attr(operation='metadata write/re-read')
 @attr(assertion='reread what we wrote')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_none_to_good():
     got = _set_get_metadata('mymeta')
     eq(got, 'mymeta')
@@ -1493,10 +1257,6 @@ def test_object_set_get_metadata_none_to_good():
 @attr(method='put')
 @attr(operation='metadata write/re-read')
 @attr(assertion='write empty value, returns empty value')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_none_to_empty():
     got = _set_get_metadata('')
     eq(got, '')
@@ -1506,10 +1266,6 @@ def test_object_set_get_metadata_none_to_empty():
 @attr(method='put')
 @attr(operation='metadata write/re-write')
 @attr(assertion='new value replaces old')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_overwrite_to_good():
     bucket = get_new_bucket()
     got = _set_get_metadata('oldmeta', bucket)
@@ -1522,10 +1278,6 @@ def test_object_set_get_metadata_overwrite_to_good():
 @attr(method='put')
 @attr(operation='metadata write/re-write')
 @attr(assertion='empty value replaces old')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_overwrite_to_empty():
     bucket = get_new_bucket()
     got = _set_get_metadata('oldmeta', bucket)
@@ -1538,10 +1290,6 @@ def test_object_set_get_metadata_overwrite_to_empty():
 @attr(method='put')
 @attr(operation='metadata write/re-write')
 @attr(assertion='UTF-8 values passed through')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_unicode_metadata():
     bucket = get_new_bucket()
     key = boto.s3.key.Key(bucket)
@@ -1558,10 +1306,6 @@ def test_object_set_get_unicode_metadata():
 @attr(operation='metadata write/re-write')
 @attr(assertion='non-UTF-8 values detected, but preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_non_utf8_metadata():
     bucket = get_new_bucket()
     key = boto.s3.key.Key(bucket)
@@ -1590,10 +1334,6 @@ def _set_get_metadata_unreadable(metadata, bucket=None):
 @attr(operation='metadata write')
 @attr(assertion='non-priting prefixes noted and preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_empty_to_unreadable_prefix():
     metadata = '\x04w'
     got = _set_get_metadata_unreadable(metadata)
@@ -1605,10 +1345,6 @@ def test_object_set_get_metadata_empty_to_unreadable_prefix():
 @attr(operation='metadata write')
 @attr(assertion='non-priting suffixes noted and preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_empty_to_unreadable_suffix():
     metadata = 'h\x04'
     got = _set_get_metadata_unreadable(metadata)
@@ -1620,10 +1356,6 @@ def test_object_set_get_metadata_empty_to_unreadable_suffix():
 @attr(operation='metadata write')
 @attr(assertion='non-priting in-fixes noted and preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_empty_to_unreadable_infix():
     metadata = 'h\x04w'
     got = _set_get_metadata_unreadable(metadata)
@@ -1635,10 +1367,6 @@ def test_object_set_get_metadata_empty_to_unreadable_infix():
 @attr(operation='metadata re-write')
 @attr(assertion='non-priting prefixes noted and preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_overwrite_to_unreadable_prefix():
     metadata = '\x04w'
     got = _set_get_metadata_unreadable(metadata)
@@ -1653,10 +1381,6 @@ def test_object_set_get_metadata_overwrite_to_unreadable_prefix():
 @attr(operation='metadata re-write')
 @attr(assertion='non-priting suffixes noted and preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_overwrite_to_unreadable_suffix():
     metadata = 'h\x04'
     got = _set_get_metadata_unreadable(metadata)
@@ -1671,10 +1395,6 @@ def test_object_set_get_metadata_overwrite_to_unreadable_suffix():
 @attr(operation='metadata re-write')
 @attr(assertion='non-priting in-fixes noted and preserved')
 @attr('fails_strict_rfc2616')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_get_metadata_overwrite_to_unreadable_infix():
     metadata = 'h\x04w'
     got = _set_get_metadata_unreadable(metadata)
@@ -1688,10 +1408,6 @@ def test_object_set_get_metadata_overwrite_to_unreadable_infix():
 @attr(method='put')
 @attr(operation='data re-write')
 @attr(assertion='replaces previous metadata')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_metadata_replaced_on_put():
     bucket = get_new_bucket()
 
@@ -1714,10 +1430,6 @@ def test_object_metadata_replaced_on_put():
 @attr(method='put')
 @attr(operation='data write from file (w/100-Continue)')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_write_file():
     # boto Key.set_contents_from_file / .send_file uses Expect:
     # 100-Continue, so this test exercises that (though a bit too
@@ -1740,10 +1452,6 @@ def _get_post_url(conn, bucket):
 @attr(method='post')
 @attr(operation='anonymous browser based upload via POST request')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_anonymous_request():
 	bucket = get_new_bucket()
 	url = _get_post_url(s3.main, bucket)
@@ -1763,10 +1471,6 @@ def test_post_object_anonymous_request():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_authenticated_request():
 	bucket = get_new_bucket()
 
@@ -1804,10 +1508,6 @@ def test_post_object_authenticated_request():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request, no content-type header')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_authenticated_no_content_type():
 	bucket = get_new_bucket()
 
@@ -1844,10 +1544,6 @@ def test_post_object_authenticated_no_content_type():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request, bad access key')
 @attr(assertion='fails')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_authenticated_request_bad_access_key():
 	bucket = get_new_bucket()
 	bucket.set_acl('public-read-write')
@@ -1884,10 +1580,6 @@ def test_post_object_authenticated_request_bad_access_key():
 @attr(method='post')
 @attr(operation='anonymous browser based upload via POST request')
 @attr(assertion='succeeds with status 201')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_set_success_code():
 	bucket = get_new_bucket()
 	bucket.set_acl('public-read-write')
@@ -1907,10 +1599,6 @@ def test_post_object_set_success_code():
 @attr(method='post')
 @attr(operation='anonymous browser based upload via POST request')
 @attr(assertion='succeeds with status 204')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_set_invalid_success_code():
 	bucket = get_new_bucket()
 	bucket.set_acl('public-read-write')
@@ -1929,10 +1617,6 @@ def test_post_object_set_invalid_success_code():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_upload_larger_than_chunk():
 	bucket = get_new_bucket()
 
@@ -1973,10 +1657,6 @@ def test_post_object_upload_larger_than_chunk():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_set_key_from_filename():
 	bucket = get_new_bucket()
 
@@ -2015,10 +1695,6 @@ def test_post_object_set_key_from_filename():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds with status 204')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_ignored_header():
 	bucket = get_new_bucket()
 
@@ -2054,10 +1730,6 @@ def test_post_object_ignored_header():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds with status 204')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_case_insensitive_condition_fields():
 	bucket = get_new_bucket()
 
@@ -2093,10 +1765,6 @@ def test_post_object_case_insensitive_condition_fields():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds with escaped leading $ and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_escaped_field_values():
 	bucket = get_new_bucket()
 
@@ -2135,10 +1803,6 @@ def test_post_object_escaped_field_values():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds and returns redirect url')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_success_redirect_action():
 	bucket = get_new_bucket()
 
@@ -2183,10 +1847,6 @@ def test_post_object_success_redirect_action():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with invalid signature error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_invalid_signature():
 	bucket = get_new_bucket()
 
@@ -2222,10 +1882,6 @@ def test_post_object_invalid_signature():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with access key does not exist error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_invalid_access_key():
 	bucket = get_new_bucket()
 
@@ -2261,10 +1917,6 @@ def test_post_object_invalid_access_key():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with invalid expiration error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_invalid_date_format():
 	bucket = get_new_bucket()
 
@@ -2300,10 +1952,6 @@ def test_post_object_invalid_date_format():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with missing key error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_no_key_specified():
 	bucket = get_new_bucket()
 
@@ -2338,10 +1986,6 @@ def test_post_object_no_key_specified():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with missing signature error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_missing_signature():
 	bucket = get_new_bucket()
 
@@ -2377,10 +2021,6 @@ def test_post_object_missing_signature():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with extra input fields policy error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_missing_policy_condition():
 	bucket = get_new_bucket()
 
@@ -2415,10 +2055,6 @@ def test_post_object_missing_policy_condition():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds using starts-with restriction on metadata header')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_user_specified_header():
 	bucket = get_new_bucket()
 
@@ -2457,10 +2093,6 @@ def test_post_object_user_specified_header():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with policy condition failed error due to missing field in POST request')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_request_missing_policy_specified_field():
 	bucket = get_new_bucket()
 
@@ -2497,10 +2129,6 @@ def test_post_object_request_missing_policy_specified_field():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with conditions must be list error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_condition_is_case_sensitive():
 	bucket = get_new_bucket()
 
@@ -2536,10 +2164,6 @@ def test_post_object_condition_is_case_sensitive():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with expiration must be string error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_expires_is_case_sensitive():
 	bucket = get_new_bucket()
 
@@ -2575,10 +2199,6 @@ def test_post_object_expires_is_case_sensitive():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with policy expired error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_expired_policy():
 	bucket = get_new_bucket()
 
@@ -2614,10 +2234,6 @@ def test_post_object_expired_policy():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails using equality restriction on metadata header')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_invalid_request_field_value():
 	bucket = get_new_bucket()
 
@@ -2654,10 +2270,6 @@ def test_post_object_invalid_request_field_value():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with policy missing expiration error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_missing_expires_condition():
 	bucket = get_new_bucket()
 
@@ -2693,10 +2305,6 @@ def test_post_object_missing_expires_condition():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with policy missing conditions error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_missing_conditions_list():
 	bucket = get_new_bucket()
 
@@ -2725,10 +2333,6 @@ def test_post_object_missing_conditions_list():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with allowable upload size exceeded error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_upload_size_limit_exceeded():
 	bucket = get_new_bucket()
 
@@ -2764,10 +2368,6 @@ def test_post_object_upload_size_limit_exceeded():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with invalid content length error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_missing_content_length_argument():
 	bucket = get_new_bucket()
 
@@ -2803,10 +2403,6 @@ def test_post_object_missing_content_length_argument():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with invalid JSON error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_invalid_content_length_argument():
 	bucket = get_new_bucket()
 
@@ -2842,10 +2438,6 @@ def test_post_object_invalid_content_length_argument():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='fails with upload size less than minimum allowable error')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_upload_size_below_minimum():
 	bucket = get_new_bucket()
 
@@ -2880,10 +2472,6 @@ def test_post_object_upload_size_below_minimum():
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='empty conditions return appropriate error response')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_empty_conditions():
 	bucket = get_new_bucket()
 
@@ -2916,10 +2504,6 @@ def test_post_object_empty_conditions():
 @attr(method='get')
 @attr(operation='get w/ If-Match: the latest ETag')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifmatch_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -2933,10 +2517,6 @@ def test_get_object_ifmatch_good():
 @attr(method='get')
 @attr(operation='get w/ If-Match: bogus ETag')
 @attr(assertion='fails 412')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifmatch_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -2950,10 +2530,6 @@ def test_get_object_ifmatch_failed():
 @attr(method='get')
 @attr(operation='get w/ If-None-Match: the latest ETag')
 @attr(assertion='fails 304')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifnonematch_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -2967,10 +2543,6 @@ def test_get_object_ifnonematch_good():
 @attr(method='get')
 @attr(operation='get w/ If-None-Match: bogus ETag')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifnonematch_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -2984,10 +2556,6 @@ def test_get_object_ifnonematch_failed():
 @attr(method='get')
 @attr(operation='get w/ If-Modified-Since: before')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifmodifiedsince_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3001,10 +2569,6 @@ def test_get_object_ifmodifiedsince_good():
 @attr(method='get')
 @attr(operation='get w/ If-Modified-Since: after')
 @attr(assertion='fails 304')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifmodifiedsince_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3028,10 +2592,6 @@ def test_get_object_ifmodifiedsince_failed():
 @attr(method='get')
 @attr(operation='get w/ If-Unmodified-Since: before')
 @attr(assertion='fails 412')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifunmodifiedsince_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3045,10 +2605,6 @@ def test_get_object_ifunmodifiedsince_good():
 @attr(method='get')
 @attr(operation='get w/ If-Unmodified-Since: after')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_object_ifunmodifiedsince_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3063,11 +2619,6 @@ def test_get_object_ifunmodifiedsince_failed():
 @attr(operation='data re-write w/ If-Match: the latest ETag')
 @attr(assertion='replaces previous data and metadata')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifmatch_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3085,11 +2636,6 @@ def test_put_object_ifmatch_good():
 @attr(operation='data re-write w/ If-Match: outdated ETag')
 @attr(assertion='fails 412')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifmatch_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3112,11 +2658,6 @@ def test_put_object_ifmatch_failed():
 @attr(operation='overwrite existing object w/ If-Match: *')
 @attr(assertion='replaces previous data and metadata')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifmatch_overwrite_existed_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3134,11 +2675,6 @@ def test_put_object_ifmatch_overwrite_existed_good():
 @attr(operation='overwrite non-existing object w/ If-Match: *')
 @attr(assertion='fails 412')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifmatch_nonexisted_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3157,11 +2693,6 @@ def test_put_object_ifmatch_nonexisted_failed():
 @attr(operation='overwrite existing object w/ If-None-Match: outdated ETag')
 @attr(assertion='replaces previous data and metadata')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifnonmatch_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3179,11 +2710,6 @@ def test_put_object_ifnonmatch_good():
 @attr(operation='overwrite existing object w/ If-None-Match: the latest ETag')
 @attr(assertion='fails 412')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifnonmatch_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3205,11 +2731,6 @@ def test_put_object_ifnonmatch_failed():
 @attr(operation='overwrite non-existing object w/ If-None-Match: *')
 @attr(assertion='succeeds')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifnonmatch_nonexisted_good():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3223,11 +2744,6 @@ def test_put_object_ifnonmatch_nonexisted_good():
 @attr(operation='overwrite existing object w/ If-None-Match: *')
 @attr(assertion='fails 412')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_object_ifnonmatch_overwrite_existed_failed():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3275,10 +2791,6 @@ def _setup_bucket_request(bucket_acl=None):
 @attr(method='get')
 @attr(operation='publically readable bucket')
 @attr(assertion='bucket is readable')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get():
     (bucket, key) = _setup_request('public-read', 'public-read')
     res = _make_request('GET', bucket, key)
@@ -3290,10 +2802,6 @@ def test_object_raw_get():
 @attr(method='get')
 @attr(operation='deleted object and bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_bucket_gone():
     (bucket, key) = _setup_request('public-read', 'public-read')
     key.delete()
@@ -3308,10 +2816,6 @@ def test_object_raw_get_bucket_gone():
 @attr(method='delete')
 @attr(operation='deleted object and bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_delete_key_bucket_gone():
     (bucket, key) = _setup_request()
     key.delete()
@@ -3326,10 +2830,6 @@ def test_object_delete_key_bucket_gone():
 @attr(method='get')
 @attr(operation='deleted object')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_object_gone():
     (bucket, key) = _setup_request('public-read', 'public-read')
     key.delete()
@@ -3360,10 +2860,6 @@ def _head_bucket(bucket, authenticated=True):
 @attr(method='head')
 @attr(operation='head bucket')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_head():
     bucket = get_new_bucket()
 
@@ -3373,15 +2869,10 @@ def test_bucket_head():
 # This test relies on Ceph extensions.
 # http://tracker.ceph.com/issues/2313
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
 @attr(resource='bucket')
 @attr(method='head')
 @attr(operation='read bucket extended information')
 @attr(assertion='extended information is getting updated')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_head_extended():
     bucket = get_new_bucket()
 
@@ -3403,10 +2894,6 @@ def test_bucket_head_extended():
 @attr(method='get')
 @attr(operation='unauthenticated on private bucket')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_bucket_acl():
     (bucket, key) = _setup_request('private', 'public-read')
 
@@ -3419,10 +2906,6 @@ def test_object_raw_get_bucket_acl():
 @attr(method='get')
 @attr(operation='unauthenticated on private object')
 @attr(assertion='fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_object_acl():
     (bucket, key) = _setup_request('public-read', 'private')
 
@@ -3435,10 +2918,6 @@ def test_object_raw_get_object_acl():
 @attr(method='ACLs')
 @attr(operation='authenticated on public bucket/object')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_authenticated():
     (bucket, key) = _setup_request('public-read', 'public-read')
 
@@ -3452,10 +2931,6 @@ def test_object_raw_authenticated():
 @attr(operation='authenticated on private bucket/private object with modified response headers')
 @attr(assertion='succeeds')
 @attr('fails_on_rgw')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_response_headers():
     (bucket, key) = _setup_request('private', 'private')
 
@@ -3484,10 +2959,6 @@ def test_object_raw_response_headers():
 @attr(method='ACLs')
 @attr(operation='authenticated on private bucket/public object')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_authenticated_bucket_acl():
     (bucket, key) = _setup_request('private', 'public-read')
 
@@ -3500,10 +2971,6 @@ def test_object_raw_authenticated_bucket_acl():
 @attr(method='ACLs')
 @attr(operation='authenticated on public bucket/private object')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_authenticated_object_acl():
     (bucket, key) = _setup_request('public-read', 'private')
 
@@ -3516,10 +2983,6 @@ def test_object_raw_authenticated_object_acl():
 @attr(method='get')
 @attr(operation='authenticated on deleted object and bucket')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_authenticated_bucket_gone():
     (bucket, key) = _setup_request('public-read', 'public-read')
     key.delete()
@@ -3534,10 +2997,6 @@ def test_object_raw_authenticated_bucket_gone():
 @attr(method='get')
 @attr(operation='authenticated on deleted object')
 @attr(assertion='fails 404')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_authenticated_object_gone():
     (bucket, key) = _setup_request('public-read', 'public-read')
     key.delete()
@@ -3552,10 +3011,6 @@ def test_object_raw_authenticated_object_gone():
 @attr(method='get')
 @attr(operation='x-amz-expires check not expired')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_x_amz_expires_not_expired():
     check_aws4_support()
     (bucket, key) = _setup_request('public-read', 'public-read')
@@ -3569,10 +3024,6 @@ def test_object_raw_get_x_amz_expires_not_expired():
 @attr(method='get')
 @attr(operation='check x-amz-expires value out of range zero')
 @attr(assertion='fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_x_amz_expires_out_range_zero():
     check_aws4_support()
     (bucket, key) = _setup_request('public-read', 'public-read')
@@ -3587,10 +3038,6 @@ def test_object_raw_get_x_amz_expires_out_range_zero():
 @attr(method='get')
 @attr(operation='check x-amz-expires value out of max range')
 @attr(assertion='fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_x_amz_expires_out_max_range():
     check_aws4_support()
     (bucket, key) = _setup_request('public-read', 'public-read')
@@ -3605,10 +3052,6 @@ def test_object_raw_get_x_amz_expires_out_max_range():
 @attr(method='get')
 @attr(operation='check x-amz-expires value out of positive range')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_get_x_amz_expires_out_positive_range():
     check_aws4_support()
     (bucket, key) = _setup_request('public-read', 'public-read')
@@ -3622,10 +3065,6 @@ def test_object_raw_get_x_amz_expires_out_positive_range():
 @attr(method='put')
 @attr(operation='unauthenticated, no object acls')
 @attr(assertion='fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_put():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3639,10 +3078,6 @@ def test_object_raw_put():
 @attr(method='put')
 @attr(operation='unauthenticated, publically writable object')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_put_write_access():
     bucket = get_new_bucket()
     bucket.set_acl('public-read-write')
@@ -3657,10 +3092,6 @@ def test_object_raw_put_write_access():
 @attr(method='put')
 @attr(operation='authenticated, no object acls')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_put_authenticated():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3674,10 +3105,6 @@ def test_object_raw_put_authenticated():
 @attr(method='put')
 @attr(operation='authenticated, no object acls')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_raw_put_authenticated_expired():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -3701,17 +3128,12 @@ def check_bad_bucket_name(name):
 # AWS does not enforce all documented bucket restrictions.
 # http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?BucketRestrictions.html
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
 # Breaks DNS with SubdomainCallingFormat
 @attr('fails_with_subdomain')
 @attr(resource='bucket')
 @attr(method='put')
 @attr(operation='name begins with underscore')
 @attr(assertion='fails with subdomain: 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_starts_nonalpha():
     bucket_name = get_new_bucket_name()
     check_bad_bucket_name('_' + bucket_name)
@@ -3721,10 +3143,6 @@ def test_bucket_create_naming_bad_starts_nonalpha():
 @attr(method='put')
 @attr(operation='empty name')
 @attr(assertion='fails 405')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_short_empty():
     # bucket creates where name is empty look like PUTs to the parent
     # resource (with slash), hence their error response is different
@@ -3738,10 +3156,6 @@ def test_bucket_create_naming_bad_short_empty():
 @attr(method='put')
 @attr(operation='short (one character) name')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_short_one():
     check_bad_bucket_name('a')
 
@@ -3750,10 +3164,6 @@ def test_bucket_create_naming_bad_short_one():
 @attr(method='put')
 @attr(operation='short (two character) name')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_short_two():
     check_bad_bucket_name('aa')
 
@@ -3763,10 +3173,6 @@ def test_bucket_create_naming_bad_short_two():
 @attr(method='put')
 @attr(operation='excessively long names')
 @attr(assertion='fails with subdomain: 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_long():
     check_bad_bucket_name(256*'a')
     check_bad_bucket_name(280*'a')
@@ -3814,11 +3220,6 @@ def _test_bucket_create_naming_good_long(length):
 @attr(operation='create w/250 byte name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_long_250():
     _test_bucket_create_naming_good_long(250)
 
@@ -3830,11 +3231,6 @@ def test_bucket_create_naming_good_long_250():
 @attr(operation='create w/251 byte name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_long_251():
     _test_bucket_create_naming_good_long(251)
 
@@ -3846,11 +3242,6 @@ def test_bucket_create_naming_good_long_251():
 @attr(operation='create w/252 byte name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_long_252():
     _test_bucket_create_naming_good_long(252)
 
@@ -3861,10 +3252,6 @@ def test_bucket_create_naming_good_long_252():
 @attr(method='put')
 @attr(operation='create w/253 byte name')
 @attr(assertion='fails with subdomain')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_long_253():
     _test_bucket_create_naming_good_long(253)
 
@@ -3875,10 +3262,6 @@ def test_bucket_create_naming_good_long_253():
 @attr(method='put')
 @attr(operation='create w/254 byte name')
 @attr(assertion='fails with subdomain')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_long_254():
     _test_bucket_create_naming_good_long(254)
 
@@ -3889,10 +3272,6 @@ def test_bucket_create_naming_good_long_254():
 @attr(method='put')
 @attr(operation='create w/255 byte name')
 @attr(assertion='fails with subdomain')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_long_255():
     _test_bucket_create_naming_good_long(255)
 
@@ -3903,11 +3282,6 @@ def test_bucket_create_naming_good_long_255():
 @attr(operation='list w/251 byte name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_long_name():
     prefix = get_new_bucket_name()
     length = 251
@@ -3924,15 +3298,10 @@ def test_bucket_list_long_name():
 # AWS does not enforce all documented bucket restrictions.
 # http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?BucketRestrictions.html
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
 @attr(resource='bucket')
 @attr(method='put')
 @attr(operation='create w/ip address for name')
 @attr(assertion='fails on aws')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_ip():
     check_bad_bucket_name('192.168.5.123')
 
@@ -3943,10 +3312,6 @@ def test_bucket_create_naming_bad_ip():
 @attr(method='put')
 @attr(operation='create w/! in name')
 @attr(assertion='fails with subdomain')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_bad_punctuation():
     # characters other than [a-zA-Z0-9._-]
     check_bad_bucket_name('alpha!soup')
@@ -3958,11 +3323,6 @@ def test_bucket_create_naming_bad_punctuation():
 @attr(operation='create w/underscore in name')
 @attr(assertion='succeeds')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_dns_underscore():
     check_good_bucket_name('foo_bar')
 
@@ -3974,11 +3334,6 @@ def test_bucket_create_naming_dns_underscore():
 @attr(operation='create w/100 byte name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_dns_long():
     prefix = get_prefix()
     assert len(prefix) < 50
@@ -3993,11 +3348,6 @@ def test_bucket_create_naming_dns_long():
 @attr(operation='create w/dash at end of name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_dns_dash_at_end():
     check_good_bucket_name('foo-')
 
@@ -4009,11 +3359,6 @@ def test_bucket_create_naming_dns_dash_at_end():
 @attr(operation='create w/.. in name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_dns_dot_dot():
     check_good_bucket_name('foo..bar')
 
@@ -4025,11 +3370,6 @@ def test_bucket_create_naming_dns_dot_dot():
 @attr(operation='create w/.- in name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_dns_dot_dash():
     check_good_bucket_name('foo.-bar')
 
@@ -4041,11 +3381,6 @@ def test_bucket_create_naming_dns_dot_dash():
 @attr(operation='create w/-. in name')
 @attr(assertion='fails with subdomain')
 @attr('fails_on_aws') # <Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>...</Error>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_dns_dash_dot():
     check_good_bucket_name('foo-.bar')
 
@@ -4053,10 +3388,6 @@ def test_bucket_create_naming_dns_dash_dot():
 @attr(resource='bucket')
 @attr(method='put')
 @attr(operation='re-create')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_exists():
     # aws-s3 default region allows recreation of buckets
     # but all other regions fail with BucketAlreadyOwnedByYou.
@@ -4071,10 +3402,6 @@ def test_bucket_create_exists():
 @attr(resource='bucket')
 @attr(method='put')
 @attr(operation='recreate')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_configure_recreate():
     # aws-s3 default region allows recreation of buckets
     # but all other regions fail with BucketAlreadyOwnedByYou.
@@ -4090,10 +3417,6 @@ def test_bucket_configure_recreate():
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='get location')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_get_location():
     bucket = get_new_bucket(targets.main.default)
     actual_location = bucket.get_location()
@@ -4105,10 +3428,6 @@ def test_bucket_get_location():
 @attr(method='put')
 @attr(operation='re-create by non-owner')
 @attr(assertion='fails 409')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_exists_nonowner():
     # Names are shared across a global namespace. As such, no two
     # users can create a bucket with that same name.
@@ -4123,10 +3442,6 @@ def test_bucket_create_exists_nonowner():
 @attr(method='del')
 @attr(operation='delete by non-owner')
 @attr(assertion='fails')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_delete_nonowner():
     bucket = get_new_bucket()
     check_access_denied(s3.alt.delete_bucket, bucket.name)
@@ -4136,10 +3451,6 @@ def test_bucket_delete_nonowner():
 @attr(method='get')
 @attr(operation='default acl')
 @attr(assertion='read back expected defaults')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_default():
     bucket = get_new_bucket()
     policy = bucket.get_acl()
@@ -4167,11 +3478,6 @@ def test_bucket_acl_default():
 @attr(operation='public-read acl')
 @attr(assertion='read back expected defaults')
 @attr('fails_on_aws') # <Error><Code>IllegalLocationConstraintException</Code><Message>The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.</Message>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_canned_during_create():
     name = get_new_bucket_name()
     bucket = targets.main.default.connection.create_bucket(name, policy = 'public-read')
@@ -4203,10 +3509,6 @@ def test_bucket_acl_canned_during_create():
 @attr(method='put')
 @attr(operation='acl: public-read,private')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_canned():
     bucket = get_new_bucket()
     # Since it defaults to private, set it public-read first
@@ -4258,10 +3560,6 @@ def test_bucket_acl_canned():
 @attr(method='put')
 @attr(operation='acl: public-read-write')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_canned_publicreadwrite():
     bucket = get_new_bucket()
     bucket.set_acl('public-read-write')
@@ -4302,10 +3600,6 @@ def test_bucket_acl_canned_publicreadwrite():
 @attr(method='put')
 @attr(operation='acl: authenticated-read')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_canned_authenticatedread():
     bucket = get_new_bucket()
     bucket.set_acl('authenticated-read')
@@ -4338,10 +3632,6 @@ def test_bucket_acl_canned_authenticatedread():
 @attr(method='get')
 @attr(operation='default acl')
 @attr(assertion='read back expected defaults')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_default():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -4367,10 +3657,6 @@ def test_object_acl_default():
 @attr(method='put')
 @attr(operation='acl public-read')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_canned_during_create():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -4404,10 +3690,6 @@ def test_object_acl_canned_during_create():
 @attr(method='put')
 @attr(operation='acl public-read,private')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_canned():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -4461,10 +3743,6 @@ def test_object_acl_canned():
 @attr(method='put')
 @attr(operation='acl public-read-write')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_canned_publicreadwrite():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -4507,10 +3785,6 @@ def test_object_acl_canned_publicreadwrite():
 @attr(method='put')
 @attr(operation='acl authenticated-read')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_canned_authenticatedread():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -4545,10 +3819,6 @@ def test_object_acl_canned_authenticatedread():
 @attr(method='put')
 @attr(operation='acl bucket-owner-read')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_canned_bucketownerread():
     bucket = get_new_bucket(targets.main.default)
     bucket.set_acl('public-read-write')
@@ -4593,10 +3863,6 @@ def test_object_acl_canned_bucketownerread():
 @attr(method='put')
 @attr(operation='acl bucket-owner-read')
 @attr(assertion='read back expected values')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_canned_bucketownerfullcontrol():
     bucket = get_new_bucket(targets.main.default)
     bucket.set_acl('public-read-write')
@@ -4641,11 +3907,6 @@ def test_object_acl_canned_bucketownerfullcontrol():
 @attr(operation='set write-acp')
 @attr(assertion='does not modify owner')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_full_control_verify_owner():
     bucket = get_new_bucket(targets.main.default)
     bucket.set_acl('public-read-write')
@@ -4666,10 +3927,6 @@ def test_object_acl_full_control_verify_owner():
 @attr(method='put')
 @attr(operation='set write-acp')
 @attr(assertion='does not modify other attributes')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_full_control_verify_attributes():
     bucket = get_new_bucket(targets.main.default)
     bucket.set_acl('public-read-write')
@@ -4695,10 +3952,6 @@ def test_object_acl_full_control_verify_attributes():
 @attr(method='ACLs')
 @attr(operation='set acl private')
 @attr(assertion='a private object can be set to private')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_canned_private_to_private():
     bucket = get_new_bucket()
     bucket.set_acl('private')
@@ -4745,11 +3998,6 @@ def _build_bucket_acl_xml(permission, bucket=None):
 @attr(operation='set acl FULL_CONTROL (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_xml_fullcontrol():
     _build_bucket_acl_xml('FULL_CONTROL')
 
@@ -4759,11 +4007,6 @@ def test_bucket_acl_xml_fullcontrol():
 @attr(operation='set acl WRITE (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_xml_write():
     _build_bucket_acl_xml('WRITE')
 
@@ -4773,11 +4016,6 @@ def test_bucket_acl_xml_write():
 @attr(operation='set acl WRITE_ACP (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_xml_writeacp():
     _build_bucket_acl_xml('WRITE_ACP')
 
@@ -4787,11 +4025,6 @@ def test_bucket_acl_xml_writeacp():
 @attr(operation='set acl READ (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_xml_read():
     _build_bucket_acl_xml('READ')
 
@@ -4801,11 +4034,6 @@ def test_bucket_acl_xml_read():
 @attr(operation='set acl READ_ACP (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_xml_readacp():
     _build_bucket_acl_xml('READ_ACP')
 
@@ -4845,11 +4073,6 @@ def _build_object_acl_xml(permission):
 @attr(operation='set acl FULL_CONTROL (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_xml():
     _build_object_acl_xml('FULL_CONTROL')
 
@@ -4859,11 +4082,6 @@ def test_object_acl_xml():
 @attr(operation='set acl WRITE (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_xml_write():
     _build_object_acl_xml('WRITE')
 
@@ -4873,11 +4091,6 @@ def test_object_acl_xml_write():
 @attr(operation='set acl WRITE_ACP (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_xml_writeacp():
     _build_object_acl_xml('WRITE_ACP')
 
@@ -4887,11 +4100,6 @@ def test_object_acl_xml_writeacp():
 @attr(operation='set acl READ (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_xml_read():
     _build_object_acl_xml('READ')
 
@@ -4901,11 +4109,6 @@ def test_object_acl_xml_read():
 @attr(operation='set acl READ_ACP (xml)')
 @attr(assertion='reads back correctly')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_acl_xml_readacp():
     _build_object_acl_xml('READ_ACP')
 
@@ -5015,11 +4218,6 @@ def _check_bucket_acl_grant_cant_writeacp(bucket):
 @attr(operation='set acl w/userid FULL_CONTROL')
 @attr(assertion='can read/write data/acls')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${USER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_userid_fullcontrol():
     bucket = _bucket_acl_grant_userid('FULL_CONTROL')
 
@@ -5044,11 +4242,6 @@ def test_bucket_acl_grant_userid_fullcontrol():
 @attr(operation='set acl w/userid READ')
 @attr(assertion='can read data, no other r/w')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_userid_read():
     bucket = _bucket_acl_grant_userid('READ')
 
@@ -5067,11 +4260,6 @@ def test_bucket_acl_grant_userid_read():
 @attr(operation='set acl w/userid READ_ACP')
 @attr(assertion='can read acl, no other r/w')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_userid_readacp():
     bucket = _bucket_acl_grant_userid('READ_ACP')
 
@@ -5090,11 +4278,6 @@ def test_bucket_acl_grant_userid_readacp():
 @attr(operation='set acl w/userid WRITE')
 @attr(assertion='can write data, no other r/w')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_userid_write():
     bucket = _bucket_acl_grant_userid('WRITE')
 
@@ -5113,11 +4296,6 @@ def test_bucket_acl_grant_userid_write():
 @attr(operation='set acl w/userid WRITE_ACP')
 @attr(assertion='can write acls, no other r/w')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_userid_writeacp():
     bucket = _bucket_acl_grant_userid('WRITE_ACP')
 
@@ -5135,10 +4313,6 @@ def test_bucket_acl_grant_userid_writeacp():
 @attr(method='ACLs')
 @attr(operation='set acl w/invalid userid')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_nonexist_user():
     bucket = get_new_bucket()
     # add alt user
@@ -5156,11 +4330,6 @@ def test_bucket_acl_grant_nonexist_user():
 @attr(method='ACLs')
 @attr(operation='revoke all ACLs')
 @attr(assertion='can: read obj, get/set bucket acl, cannot write objs')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_no_grants():
     bucket = get_new_bucket()
 
@@ -5211,11 +4380,6 @@ def _get_acl_header(user=None, perms=None):
 @attr(assertion='adds all grants individually to second user')
 @attr('fails_on_dho')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_header_acl_grants():
     bucket = get_new_bucket()
     headers = _get_acl_header()
@@ -5276,11 +4440,6 @@ def test_object_header_acl_grants():
 @attr(assertion='adds all grants individually to second user')
 @attr('fails_on_dho')
 @attr('fails_on_aws') #  <Error><Code>InvalidArgument</Code><Message>Invalid id</Message><ArgumentName>CanonicalUser/ID</ArgumentName><ArgumentValue>${ALTUSER}</ArgumentValue>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_header_acl_grants():
     headers = _get_acl_header()
     bucket = get_new_bucket(targets.main.default, get_prefix(), headers)
@@ -5346,11 +4505,6 @@ def test_bucket_header_acl_grants():
 @attr(operation='add second FULL_CONTROL user')
 @attr(assertion='works for S3, fails for DHO')
 @attr('fails_on_aws') #  <Error><Code>AmbiguousGrantByEmailAddress</Code><Message>The e-mail address you provided is associated with more than one account. Please retry your request using a different identification method or after resolving the ambiguity.</Message>
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_email():
     bucket = get_new_bucket()
     # add alt user
@@ -5390,10 +4544,6 @@ def test_bucket_acl_grant_email():
 @attr(method='ACLs')
 @attr(operation='add acl for nonexistent user')
 @attr(assertion='fail 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_grant_email_notexist():
     # behavior not documented by amazon
     bucket = get_new_bucket()
@@ -5409,10 +4559,6 @@ def test_bucket_acl_grant_email_notexist():
 @attr(method='ACLs')
 @attr(operation='revoke all ACLs')
 @attr(assertion='acls read back as empty')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acl_revoke_all():
     # revoke all access, including the owner's access
     bucket = get_new_bucket()
@@ -5430,10 +4576,6 @@ def test_bucket_acl_revoke_all():
 @attr(operation='set/enable/disable logging target')
 @attr(assertion='operations succeed')
 @attr('fails_on_rgw')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_logging_toggle():
     bucket = get_new_bucket()
     log_bucket = get_new_bucket(targets.main.default, bucket.name + '-log')
@@ -5477,10 +4619,6 @@ def get_bucket_key_names(bucket):
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: private/private')
 @attr(assertion='public has no access to bucket or objects')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_private_object_private():
     # all the test_access_* tests follow this template
     obj = _setup_access(bucket_acl='private', object_acl='private')
@@ -5503,10 +4641,6 @@ def test_access_bucket_private_object_private():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: private/public-read')
 @attr(assertion='public can only read readable object')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_private_object_publicread():
     obj = _setup_access(bucket_acl='private', object_acl='public-read')
     # a should be public-read, b gets default (private)
@@ -5522,10 +4656,6 @@ def test_access_bucket_private_object_publicread():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: private/public-read/write')
 @attr(assertion='public can only read the readable object')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_private_object_publicreadwrite():
     obj = _setup_access(bucket_acl='private', object_acl='public-read-write')
     # a should be public-read-only ... because it is in a private bucket
@@ -5542,10 +4672,6 @@ def test_access_bucket_private_object_publicreadwrite():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read/private')
 @attr(assertion='public can only list the bucket')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_publicread_object_private():
     obj = _setup_access(bucket_acl='public-read', object_acl='private')
     # a should be private, b gets default (private)
@@ -5561,10 +4687,6 @@ def test_access_bucket_publicread_object_private():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read/public-read')
 @attr(assertion='public can read readable objects and list bucket')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_publicread_object_publicread():
     obj = _setup_access(bucket_acl='public-read', object_acl='public-read')
     # a should be public-read, b gets default (private)
@@ -5580,10 +4702,6 @@ def test_access_bucket_publicread_object_publicread():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read/public-read-write')
 @attr(assertion='public can read readable objects and list bucket')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_publicread_object_publicreadwrite():
     obj = _setup_access(bucket_acl='public-read', object_acl='public-read-write')
     # a should be public-read-only ... because it is in a r/o bucket
@@ -5600,10 +4718,6 @@ def test_access_bucket_publicread_object_publicreadwrite():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read-write/private')
 @attr(assertion='private objects cannot be read, but can be overwritten')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_publicreadwrite_object_private():
     obj = _setup_access(bucket_acl='public-read-write', object_acl='private')
     # a should be private, b gets default (private)
@@ -5619,10 +4733,6 @@ def test_access_bucket_publicreadwrite_object_private():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read-write/public-read')
 @attr(assertion='private objects cannot be read, but can be overwritten')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_publicreadwrite_object_publicread():
     obj = _setup_access(bucket_acl='public-read-write', object_acl='public-read')
     # a should be public-read, b gets default (private)
@@ -5637,10 +4747,6 @@ def test_access_bucket_publicreadwrite_object_publicread():
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read-write/public-read-write')
 @attr(assertion='private objects cannot be read, but can be overwritten')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_access_bucket_publicreadwrite_object_publicreadwrite():
     obj = _setup_access(bucket_acl='public-read-write', object_acl='public-read-write')
     # a should be public-read-write, b gets default (private)
@@ -5655,10 +4761,6 @@ def test_access_bucket_publicreadwrite_object_publicreadwrite():
 @attr(method='put')
 @attr(operation='set object acls')
 @attr(assertion='valid XML ACL sets properly')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_set_valid_acl():
     XML_1 = '<?xml version="1.0" encoding="UTF-8"?><AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>' + config.main.user_id + '</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CanonicalUser"><ID>' + config.main.user_id + '</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>'
     bucket = get_new_bucket()
@@ -5670,10 +4772,6 @@ def test_object_set_valid_acl():
 @attr(method='put')
 @attr(operation='set object acls')
 @attr(assertion='invalid XML ACL fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_giveaway():
     CORRECT_ACL = '<?xml version="1.0" encoding="UTF-8"?><AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>' + config.main.user_id + '</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CanonicalUser"><ID>' + config.main.user_id + '</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>'
     WRONG_ACL = '<?xml version="1.0" encoding="UTF-8"?><AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>' + config.alt.user_id + '</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CanonicalUser"><ID>' + config.alt.user_id + '</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>'
@@ -5690,10 +4788,6 @@ def test_object_giveaway():
 @attr(method='get')
 @attr(operation='list all buckets')
 @attr(assertion='returns all expected buckets')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_buckets_create_then_list():
     create_buckets = [get_new_bucket() for i in xrange(5)]
     list_buckets = s3.main.get_all_buckets()
@@ -5722,11 +4816,6 @@ def _create_connection_bad_auth(aws_access_key_id='badauth'):
 @attr(operation='list all buckets (anonymous)')
 @attr(assertion='succeeds')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_list_buckets_anonymous():
     # Get a connection with bad authorization, then change it to be our new Anonymous auth mechanism,
     # emulating standard HTTP access.
@@ -5742,10 +4831,6 @@ def test_list_buckets_anonymous():
 @attr(method='get')
 @attr(operation='list all buckets (bad auth)')
 @attr(assertion='fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_list_buckets_invalid_auth():
     conn = _create_connection_bad_auth()
     e = assert_raises(boto.exception.S3ResponseError, conn.get_all_buckets)
@@ -5757,10 +4842,6 @@ def test_list_buckets_invalid_auth():
 @attr(method='get')
 @attr(operation='list all buckets (bad auth)')
 @attr(assertion='fails 403')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_list_buckets_bad_auth():
     conn = _create_connection_bad_auth(aws_access_key_id=s3.main.aws_access_key_id)
     e = assert_raises(boto.exception.S3ResponseError, conn.get_all_buckets)
@@ -5778,10 +4859,6 @@ def test_list_buckets_bad_auth():
     setup=lambda: nuke_prefixed_buckets(prefix='a'+get_prefix()),
     teardown=lambda: nuke_prefixed_buckets(prefix='a'+get_prefix()),
     )
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_starts_alpha():
     check_good_bucket_name('foo', _prefix='a'+get_prefix())
 
@@ -5795,10 +4872,6 @@ def test_bucket_create_naming_good_starts_alpha():
     setup=lambda: nuke_prefixed_buckets(prefix='0'+get_prefix()),
     teardown=lambda: nuke_prefixed_buckets(prefix='0'+get_prefix()),
     )
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_starts_digit():
     check_good_bucket_name('foo', _prefix='0'+get_prefix())
 
@@ -5806,10 +4879,6 @@ def test_bucket_create_naming_good_starts_digit():
 @attr(method='put')
 @attr(operation='create bucket')
 @attr(assertion='name containing dot works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_contains_period():
     check_good_bucket_name('aaa.111')
 
@@ -5817,10 +4886,6 @@ def test_bucket_create_naming_good_contains_period():
 @attr(method='put')
 @attr(operation='create bucket')
 @attr(assertion='name containing hyphen works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_naming_good_contains_hyphen():
     check_good_bucket_name('aaa-111')
 
@@ -5828,10 +4893,6 @@ def test_bucket_create_naming_good_contains_hyphen():
 @attr(method='put')
 @attr(operation='create bucket with objects and recreate it')
 @attr(assertion='bucket recreation not overriding index')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_recreate_not_overriding():
     key_names = ['mykey1', 'mykey2']
     bucket = _create_keys(keys=key_names)
@@ -5852,10 +4913,6 @@ def test_bucket_recreate_not_overriding():
 @attr(method='put')
 @attr(operation='create and list objects with special names')
 @attr(assertion='special names work')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_create_special_key_names():
     key_names = [
         ' ',
@@ -5889,10 +4946,6 @@ def test_bucket_create_special_key_names():
 @attr(method='get')
 @attr(operation='create and list objects with underscore as prefix, list using prefix')
 @attr(assertion='listing works correctly')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_list_special_prefix():
     key_names = ['_bla/1', '_bla/2', '_bla/3', '_bla/4', 'abcd']
     bucket = _create_keys(keys=key_names)
@@ -5907,10 +4960,6 @@ def test_bucket_list_special_prefix():
 @attr(method='put')
 @attr(operation='copy zero sized object in same bucket')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_zero_size():
     bucket = get_new_bucket()
     key = bucket.new_key('foo123bar')
@@ -5924,10 +4973,6 @@ def test_object_copy_zero_size():
 @attr(method='put')
 @attr(operation='copy object in same bucket')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_same_bucket():
     bucket = get_new_bucket()
     key = bucket.new_key('foo123bar')
@@ -5941,10 +4986,6 @@ def test_object_copy_same_bucket():
 @attr(method='put')
 @attr(operation='copy object with content-type')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_verify_contenttype():
     bucket = get_new_bucket()
     key = bucket.new_key('foo123bar')
@@ -5959,11 +5000,6 @@ def test_object_copy_verify_contenttype():
 @attr(method='put')
 @attr(operation='copy object to itself')
 @attr(assertion='fails')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_to_itself():
     bucket = get_new_bucket()
     key = bucket.new_key('foo123bar')
@@ -5977,10 +5013,6 @@ def test_object_copy_to_itself():
 @attr(method='put')
 @attr(operation='modify object metadata by copying')
 @attr(assertion='fails')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_to_itself_with_metadata():
     bucket = get_new_bucket()
     key = bucket.new_key('foo123bar')
@@ -5997,10 +5029,6 @@ def test_object_copy_to_itself_with_metadata():
 @attr(method='put')
 @attr(operation='copy object from different bucket')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_diff_bucket():
     buckets = [get_new_bucket(), get_new_bucket()]
     key = buckets[0].new_key('foo123bar')
@@ -6015,10 +5043,6 @@ def test_object_copy_diff_bucket():
 @attr(method='put')
 @attr(operation='copy from an inaccessible bucket')
 @attr(assertion='fails w/AttributeError')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_not_owned_bucket():
     buckets = [get_new_bucket(), get_new_bucket(targets.alt.default)]
     print repr(buckets[1])
@@ -6034,10 +5058,6 @@ def test_object_copy_not_owned_bucket():
 @attr(method='put')
 @attr(operation='copy a non-owned object in a non-owned bucket, but with perms')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_not_owned_object_bucket():
     bucket = get_new_bucket(targets.main.default)
     key = bucket.new_key('foo123bar')
@@ -6050,10 +5070,6 @@ def test_object_copy_not_owned_object_bucket():
 @attr(method='put')
 @attr(operation='copy object and change acl')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_canned_acl():
     bucket = get_new_bucket()
     key = bucket.new_key('foo123bar')
@@ -6074,10 +5090,6 @@ def test_object_copy_canned_acl():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy object and retain metadata')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_retaining_metadata():
     for size in [3, 1024 * 1024]:
         bucket = get_new_bucket()
@@ -6098,10 +5110,6 @@ def test_object_copy_retaining_metadata():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy object and replace metadata')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_replacing_metadata():
     for size in [3, 1024 * 1024]:
         bucket = get_new_bucket()
@@ -6122,10 +5130,6 @@ def test_object_copy_replacing_metadata():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy from non-existent bucket')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_bucket_not_found():
     bucket = get_new_bucket()
     e = assert_raises(boto.exception.S3ResponseError, bucket.copy_key, 'foo123bar', bucket.name + "-fake", 'bar321foo')
@@ -6136,10 +5140,6 @@ def test_object_copy_bucket_not_found():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy from non-existent object')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_key_not_found():
     bucket = get_new_bucket()
     e = assert_raises(boto.exception.S3ResponseError, bucket.copy_key, 'foo123bar', bucket.name, 'bar321foo')
@@ -6151,10 +5151,6 @@ def test_object_copy_key_not_found():
 @attr(method='put')
 @attr(operation='copy object to/from versioned bucket')
 @attr(assertion='works')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_versioned_bucket():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -6205,10 +5201,6 @@ def test_object_copy_versioned_bucket():
 @attr(method='put')
 @attr(operation='test copy object of a multipart upload')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_object_copy_versioning_multipart_upload():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -6353,10 +5345,6 @@ def _create_key_with_random_content(keyname, size=7*1024*1024, bucket=None):
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='check multipart upload without parts')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_empty():
     bucket = get_new_bucket()
     key = "mymultipart"
@@ -6368,10 +5356,6 @@ def test_multipart_upload_empty():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='check multipart uploads with single small part')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_small():
     bucket = get_new_bucket()
     key = "mymultipart"
@@ -6390,10 +5374,6 @@ def _check_key_content(src, dst):
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='check multipart copies with single small part')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_copy_small():
     (src_bucket, src_key) = _create_key_with_random_content('foo')
     dst_bucket = get_new_bucket()
@@ -6408,10 +5388,6 @@ def test_multipart_copy_small():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='check multipart copies with an invalid range')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_copy_invalid_range():
     bucket, key = _create_key_with_random_content('source', size=5)
     upload = bucket.initiate_multipart_upload('dest')
@@ -6427,11 +5403,26 @@ def test_multipart_copy_invalid_range():
 
 @attr(resource='object')
 @attr(method='put')
+@attr(operation='check multipart copies without x-amz-copy-source-range')
+def test_multipart_copy_without_range():
+    (src_bucket, src_key) = _create_key_with_random_content('source', size=10)
+    dst_bucket = get_new_bucket()
+    dst_keyname = "mymultipartcopy"
+
+    upload = dst_bucket.initiate_multipart_upload(dst_keyname)
+    # MultiPartUpload.copy_part_from_key() always add "x-amz-copy-source-range" in header
+    # So we can use copy_key() with query_args
+    query_args = 'uploadId=%s&partNumber=%d' % (upload.id, 1)
+    dst_bucket.copy_key(dst_keyname, src_bucket.name, src_key.name, query_args=query_args)
+    upload.complete_upload()
+
+    key2 = dst_bucket.get_key(dst_keyname)
+    eq(key2.size, 10)
+    _check_key_content(src_key, key2)
+
+@attr(resource='object')
+@attr(method='put')
 @attr(operation='check multipart copies with single small part')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_copy_special_names():
     src_bucket = get_new_bucket()
     dst_bucket = get_new_bucket()
@@ -6460,10 +5451,6 @@ def _check_content_using_range(k, data, step):
 @attr(method='put')
 @attr(operation='complete multi-part upload')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6490,10 +5477,6 @@ def test_multipart_upload():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='check multipart copies with single small part')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_copy_special_names():
     src_bucket = get_new_bucket()
     dst_bucket = get_new_bucket()
@@ -6510,10 +5493,6 @@ def test_multipart_copy_special_names():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='check multipart copies of versioned objects')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_copy_versioned():
     src_bucket = get_new_bucket()
     dst_bucket = get_new_bucket()
@@ -6568,10 +5547,6 @@ def _check_upload_multipart_resend(bucket, key, objlen, resend_parts):
 @attr(method='put')
 @attr(operation='complete multi-part upload')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_resend_part():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6584,10 +5559,6 @@ def test_multipart_upload_resend_part():
     _check_upload_multipart_resend(bucket, key, objlen, [0,1,2,3,4,5])
 
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_multiple_sizes():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6611,10 +5582,6 @@ def test_multipart_upload_multiple_sizes():
 
 @attr(assertion='successful')
 @attr('fails_on_rgw')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_copy_multiple_sizes():
     (src_bucket, src_key) = _create_key_with_random_content('foo', 12 * 1024 * 1024)
     dst_bucket = get_new_bucket()
@@ -6648,10 +5615,6 @@ def test_multipart_copy_multiple_sizes():
 @attr(method='put')
 @attr(operation='check failure on multiple multi-part upload with size too small')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_size_too_small():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6688,10 +5651,6 @@ def _do_test_multipart_upload_contents(bucket, key_name, num_parts):
 @attr(method='put')
 @attr(operation='check contents of multi-part upload')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_contents():
     _do_test_multipart_upload_contents(get_new_bucket(), 'mymultipart', 3)
 
@@ -6700,10 +5659,6 @@ def test_multipart_upload_contents():
 @attr(method='put')
 @attr(operation=' multi-part upload overwrites existing key')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_overwrite_existing_object():
     bucket = get_new_bucket()
     key_name="mymultipart"
@@ -6725,10 +5680,6 @@ def test_multipart_upload_overwrite_existing_object():
 @attr(method='put')
 @attr(operation='abort multi-part upload')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_abort_multipart_upload():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6740,10 +5691,6 @@ def test_abort_multipart_upload():
     eq(result.get('x-rgw-object-count', 0), 0)
     eq(result.get('x-rgw-bytes-used', 0), 0)
 
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_abort_multipart_upload_not_found():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6756,10 +5703,6 @@ def test_abort_multipart_upload_not_found():
 @attr(method='put')
 @attr(operation='concurrent multi-part uploads')
 @attr(assertion='successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_list_multipart_upload():
     bucket = get_new_bucket()
     key="mymultipart"
@@ -6788,10 +5731,6 @@ def test_list_multipart_upload():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='multi-part upload with missing part')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_missing_part():
     bucket = get_new_bucket()
     key_name = "mymultipart"
@@ -6807,10 +5746,6 @@ def test_multipart_upload_missing_part():
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='multi-part upload with incorrect ETag')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_upload_incorrect_etag():
     bucket = get_new_bucket()
     key_name = "mymultipart"
@@ -6860,10 +5795,6 @@ def _simple_http_req_100_cont(host, port, is_secure, method, resource):
 @attr(assertion='succeeds if object is public-read-write')
 @attr('100_continue')
 @attr('fails_on_mod_proxy_fcgi')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_100_continue():
     bucket = get_new_bucket()
     objname = 'testobj'
@@ -6889,10 +5820,6 @@ def _test_bucket_acls_changes_persistent(bucket):
 @attr(method='put')
 @attr(operation='acl set')
 @attr(assertion='all permissions are persistent')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_acls_changes_persistent():
     bucket = get_new_bucket()
     _test_bucket_acls_changes_persistent(bucket);
@@ -6901,10 +5828,6 @@ def test_bucket_acls_changes_persistent():
 @attr(method='put')
 @attr(operation='repeated acl set')
 @attr(assertion='all permissions are persistent')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_stress_bucket_acls_changes():
     bucket = get_new_bucket()
     for i in xrange(10):
@@ -6914,10 +5837,6 @@ def test_stress_bucket_acls_changes():
 @attr(method='put')
 @attr(operation='set cors')
 @attr(assertion='succeeds')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_set_cors():
     bucket = get_new_bucket()
     cfg = CORSConfiguration()
@@ -6961,11 +5880,6 @@ def _cors_request_and_check(func, url, headers, expect_status, expect_allow_orig
 @attr(method='get')
 @attr(operation='check cors response when origin header set')
 @attr(assertion='returning cors header')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_cors_origin_response():
     cfg = CORSConfiguration()
     bucket = get_new_bucket()
@@ -7033,11 +5947,6 @@ def test_cors_origin_response():
 @attr(method='get')
 @attr(operation='check cors response when origin is set to wildcard')
 @attr(assertion='returning cors header')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_cors_origin_wildcard():
     cfg = CORSConfiguration()
     bucket = get_new_bucket()
@@ -7186,10 +6095,6 @@ def _test_atomic_read(file_size):
 @attr(method='put')
 @attr(operation='read atomicity')
 @attr(assertion='1MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_read_1mb():
     _test_atomic_read(1024*1024)
 
@@ -7197,10 +6102,6 @@ def test_atomic_read_1mb():
 @attr(method='put')
 @attr(operation='read atomicity')
 @attr(assertion='4MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_read_4mb():
     _test_atomic_read(1024*1024*4)
 
@@ -7208,10 +6109,6 @@ def test_atomic_read_4mb():
 @attr(method='put')
 @attr(operation='read atomicity')
 @attr(assertion='8MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_read_8mb():
     _test_atomic_read(1024*1024*8)
 
@@ -7250,10 +6147,6 @@ def _test_atomic_write(file_size):
 @attr(method='put')
 @attr(operation='write atomicity')
 @attr(assertion='1MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_write_1mb():
     _test_atomic_write(1024*1024)
 
@@ -7261,10 +6154,6 @@ def test_atomic_write_1mb():
 @attr(method='put')
 @attr(operation='write atomicity')
 @attr(assertion='4MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_write_4mb():
     _test_atomic_write(1024*1024*4)
 
@@ -7272,10 +6161,6 @@ def test_atomic_write_4mb():
 @attr(method='put')
 @attr(operation='write atomicity')
 @attr(assertion='8MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_write_8mb():
     _test_atomic_write(1024*1024*8)
 
@@ -7307,10 +6192,6 @@ def _test_atomic_dual_write(file_size):
 @attr(method='put')
 @attr(operation='write one or the other')
 @attr(assertion='1MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_dual_write_1mb():
     _test_atomic_dual_write(1024*1024)
 
@@ -7318,10 +6199,6 @@ def test_atomic_dual_write_1mb():
 @attr(method='put')
 @attr(operation='write one or the other')
 @attr(assertion='4MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_dual_write_4mb():
     _test_atomic_dual_write(1024*1024*4)
 
@@ -7329,10 +6206,6 @@ def test_atomic_dual_write_4mb():
 @attr(method='put')
 @attr(operation='write one or the other')
 @attr(assertion='8MB successful')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_dual_write_8mb():
     _test_atomic_dual_write(1024*1024*8)
 
@@ -7372,11 +6245,6 @@ def _test_atomic_conditional_write(file_size):
 @attr(operation='write atomicity')
 @attr(assertion='1MB successful')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_conditional_write_1mb():
     _test_atomic_conditional_write(1024*1024)
 
@@ -7419,11 +6287,6 @@ def _test_atomic_dual_conditional_write(file_size):
 @attr(operation='write one or the other')
 @attr(assertion='1MB successful')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_dual_conditional_write_1mb():
     _test_atomic_dual_conditional_write(1024*1024)
 
@@ -7432,11 +6295,6 @@ def test_atomic_dual_conditional_write_1mb():
 @attr(operation='write file in deleted bucket')
 @attr(assertion='fail 404')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_write_bucket_gone():
     bucket = get_new_bucket()
 
@@ -7456,10 +6314,6 @@ def test_atomic_write_bucket_gone():
 @attr(method='put')
 @attr(operation='begin to overwrite file with multipart upload then abort')
 @attr(assertion='read back original key contents')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_atomic_multipart_upload_write():
     bucket = get_new_bucket()
     key = bucket.new_key('foo')
@@ -7500,11 +6354,6 @@ class ActionOnCount:
 @attr(method='put')
 @attr(operation='multipart check for two writes of the same part, first write finishes last')
 @attr(assertion='object contains correct content')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_multipart_resend_first_finishes_last():
     bucket = get_new_bucket()
     key_name = "mymultipart"
@@ -7548,10 +6397,6 @@ def test_multipart_resend_first_finishes_last():
 @attr(method='get')
 @attr(operation='range')
 @attr(assertion='returns correct data, 206')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_ranged_request_response_code():
     content = 'testcontent'
 
@@ -7575,10 +6420,29 @@ def test_ranged_request_response_code():
 @attr(method='get')
 @attr(operation='range')
 @attr(assertion='returns correct data, 206')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
+def test_ranged_big_request_response_code():
+
+    bucket = get_new_bucket()
+    key = bucket.new_key('testobj')
+    string = os.urandom(8 * 1024 * 1024)
+    key.set_contents_from_string(string)
+
+    key.open('r', headers={'Range': 'bytes=3145728-5242880'})
+    status = key.resp.status
+    content_range = key.resp.getheader('Content-Range')
+    fetched_content = ''
+    for data in key:
+        fetched_content += data;
+    key.close()
+
+    eq(fetched_content, string[3145728:5242881])
+    eq(status, 206)
+    eq(content_range, 'bytes 3145728-5242880/8388608')
+
+@attr(resource='object')
+@attr(method='get')
+@attr(operation='range')
+@attr(assertion='returns correct data, 206')
 def test_ranged_request_skip_leading_bytes_response_code():
     content = 'testcontent'
 
@@ -7603,10 +6467,6 @@ def test_ranged_request_skip_leading_bytes_response_code():
 @attr(method='get')
 @attr(operation='range')
 @attr(assertion='returns correct data, 206')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_ranged_request_return_trailing_bytes_response_code():
     content = 'testcontent'
 
@@ -7631,10 +6491,6 @@ def test_ranged_request_return_trailing_bytes_response_code():
 @attr(method='get')
 @attr(operation='range')
 @attr(assertion='returns invalid range, 416')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_ranged_request_invalid_range():
     content = 'testcontent'
 
@@ -7651,10 +6507,6 @@ def test_ranged_request_invalid_range():
 @attr(method='get')
 @attr(operation='range')
 @attr(assertion='returns invalid range, 416')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_ranged_request_empty_object():
     content = ''
 
@@ -7691,10 +6543,6 @@ def send_raw_http_request(conn, method, bucket_name, key_name, follow_redirects 
 @attr(operation='create on one region, access in another')
 @attr(assertion='can\'t access in other region')
 @attr('multiregion')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_region_bucket_create_secondary_access_remove_master():
     check_can_test_multiregion()
 
@@ -7717,10 +6565,6 @@ def test_region_bucket_create_secondary_access_remove_master():
 @attr(operation='create on one region, access in another')
 @attr(assertion='can\'t access in other region')
 @attr('multiregion')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_region_bucket_create_master_access_remove_secondary():
     check_can_test_multiregion()
 
@@ -7754,10 +6598,6 @@ def test_region_bucket_create_master_access_remove_secondary():
 @attr(operation='copy object between regions, verify')
 @attr(assertion='can read object')
 @attr('multiregion')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_region_copy_object():
     check_can_test_multiregion()
 
@@ -7871,10 +6711,6 @@ def check_configure_versioning_retry(bucket, status, expected_string):
 @attr(operation='create versioned bucket')
 @attr(assertion='can create and suspend bucket versioning')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_bucket_create_suspend():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8014,10 +6850,6 @@ def _do_test_create_remove_versions_and_head(bucket, objname, num_versions, num_
 @attr(operation='create and remove versioned object')
 @attr(assertion='can create access and remove appropriate versions')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_create_read_remove():
     bucket = get_new_bucket()
     objname = 'testobj'
@@ -8035,10 +6867,6 @@ def test_versioning_obj_create_read_remove():
 @attr(operation='create and remove versioned object and head')
 @attr(assertion='can create access and remove appropriate versions')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_create_read_remove_head():
     bucket = get_new_bucket()
     objname = 'testobj'
@@ -8090,11 +6918,6 @@ def overwrite_suspended_versioning_obj(bucket, objname, k, c, content):
 @attr(operation='create object, then switch to versioning')
 @attr(assertion='behaves correctly')
 @attr('versioning')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_plain_null_version_removal():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8126,11 +6949,6 @@ def test_versioning_obj_plain_null_version_removal():
 @attr(operation='create object, then switch to versioning')
 @attr(assertion='behaves correctly')
 @attr('versioning')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_plain_null_version_overwrite():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8177,11 +6995,6 @@ def test_versioning_obj_plain_null_version_overwrite():
 @attr(operation='create object, then switch to versioning')
 @attr(assertion='behaves correctly')
 @attr('versioning')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_plain_null_version_overwrite_suspended():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8226,10 +7039,6 @@ def test_versioning_obj_plain_null_version_overwrite_suspended():
 @attr(operation='suspend versioned bucket')
 @attr(assertion='suspended versioning behaves correctly')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_suspend_versions():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8266,10 +7075,6 @@ def test_versioning_obj_suspend_versions():
 @attr(operation='suspend versioned bucket')
 @attr(assertion='suspended versioning behaves correctly')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_suspend_versions_simple():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8303,10 +7108,6 @@ def test_versioning_obj_suspend_versions_simple():
 @attr(operation='create and remove versions')
 @attr(assertion='everything works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_create_versions_remove_all():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8329,10 +7130,6 @@ def test_versioning_obj_create_versions_remove_all():
 @attr(operation='create and remove versions')
 @attr(assertion='everything works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_create_versions_remove_special_names():
     bucket = get_new_bucket()
     check_versioning(bucket, None)
@@ -8356,10 +7153,6 @@ def test_versioning_obj_create_versions_remove_special_names():
 @attr(operation='create and test multipart object')
 @attr(assertion='everything works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_create_overwrite_multipart():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -8387,16 +7180,12 @@ def test_versioning_obj_create_overwrite_multipart():
     eq(len(k), len(c))
 
 
+
 @attr(resource='object')
 @attr(method='multipart')
 @attr(operation='list versioned objects')
 @attr(assertion='everything works')
 @attr('versioning')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_obj_list_marker():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -8434,10 +7223,6 @@ def test_versioning_obj_list_marker():
 @attr(operation='create and test versioned object copying')
 @attr(assertion='everything works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_copy_obj_version():
     bucket = get_new_bucket()
 
@@ -8478,10 +7263,6 @@ def _count_bucket_versioned_objs(bucket):
 @attr(operation='delete multiple versions')
 @attr(assertion='deletes multiple versions of an object with a single call')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_multi_object_delete():
 	bucket = get_new_bucket()
 
@@ -8518,10 +7299,6 @@ def test_versioning_multi_object_delete():
 @attr(operation='delete multiple versions')
 @attr(assertion='deletes multiple versions of an object and delete marker with a single call')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_multi_object_delete_with_marker():
         bucket = get_new_bucket()
 
@@ -8568,10 +7345,6 @@ def test_versioning_multi_object_delete_with_marker():
 @attr(operation='multi delete create marker')
 @attr(assertion='returns correct marker version id')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_multi_object_delete_with_marker_create():
         bucket = get_new_bucket()
 
@@ -8603,10 +7376,6 @@ def test_versioning_multi_object_delete_with_marker_create():
 @attr(operation='change acl on an object version changes specific version')
 @attr(assertion='works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioned_object_acl():
     bucket = get_new_bucket()
 
@@ -8677,10 +7446,6 @@ def test_versioned_object_acl():
 @attr(operation='change acl on an object with no version specified changes latest version')
 @attr(assertion='works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioned_object_acl_no_version_specified():
     bucket = get_new_bucket()
 
@@ -8775,10 +7540,6 @@ def _do_wait_completion(t):
 @attr(operation='concurrent creation of objects, concurrent removal')
 @attr(assertion='works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioned_concurrent_object_create_concurrent_remove():
     bucket = get_new_bucket()
 
@@ -8806,10 +7567,6 @@ def test_versioned_concurrent_object_create_concurrent_remove():
 @attr(operation='concurrent creation and removal of objects')
 @attr(assertion='works')
 @attr('versioning')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioned_concurrent_object_create_and_remove():
     bucket = get_new_bucket()
 
@@ -8867,10 +7624,6 @@ def set_lifecycle(rules = None):
 @attr(method='put')
 @attr(operation='set lifecycle config')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set():
     bucket = get_new_bucket()
     lifecycle = create_lifecycle(rules=[{'id': 'rule1', 'days': 1, 'prefix': 'test1/', 'status':'Enabled'},
@@ -8881,10 +7634,6 @@ def test_lifecycle_set():
 @attr(method='get')
 @attr(operation='get lifecycle config')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_get():
     bucket = set_lifecycle(rules=[{'id': 'test1/', 'days': 31, 'prefix': 'test1/', 'status': 'Enabled'},
                                   {'id': 'test2/', 'days': 120, 'prefix': 'test2/', 'status':'Enabled'}])
@@ -8902,10 +7651,6 @@ def test_lifecycle_get():
 @attr(method='get')
 @attr(operation='get lifecycle config no id')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_get_no_id():
     Rule = namedtuple('Rule',['prefix','status','days'])
     rules = {'rule1' : Rule('test1/','Enabled',31),
@@ -8938,11 +7683,6 @@ def test_lifecycle_get_no_id():
 @attr('lifecycle')
 @attr('lifecycle_expiration')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_expiration():
     bucket = set_lifecycle(rules=[{'id': 'rule1', 'days': 1, 'prefix': 'expire1/', 'status': 'Enabled'},
                                   {'id':'rule2', 'days': 4, 'prefix': 'expire3/', 'status': 'Enabled'}])
@@ -8970,10 +7710,6 @@ def test_lifecycle_expiration():
 @attr(operation='id too long in lifecycle rule')
 @attr('lifecycle')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_id_too_long():
     bucket = get_new_bucket()
     lifecycle = create_lifecycle(rules=[{'id': 256*'a', 'days': 2, 'prefix': 'test1/', 'status': 'Enabled'}])
@@ -8986,10 +7722,6 @@ def test_lifecycle_id_too_long():
 @attr(operation='same id')
 @attr('lifecycle')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_same_id():
     bucket = get_new_bucket()
     lifecycle = create_lifecycle(rules=[{'id': 'rule1', 'days': 2, 'prefix': 'test1/', 'status': 'Enabled'},
@@ -9003,10 +7735,6 @@ def test_lifecycle_same_id():
 @attr(operation='invalid status in lifecycle rule')
 @attr('lifecycle')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_invalid_status():
     bucket = get_new_bucket()
     lifecycle = create_lifecycle(rules=[{'id': 'rule1', 'days': 2, 'prefix': 'test1/', 'status': 'enabled'}])
@@ -9029,10 +7757,6 @@ def test_lifecycle_invalid_status():
 @attr(operation='rules conflicted in lifecycle')
 @attr('lifecycle')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_rules_conflicted():
     bucket = get_new_bucket()
     lifecycle = create_lifecycle(rules=[{'id': 'rule1', 'days': 2, 'prefix': 'test1/', 'status': 'Enabled'},
@@ -9078,11 +7802,6 @@ def generate_lifecycle_body(rules):
 @attr(method='put')
 @attr(operation='set lifecycle config with expiration date')
 @attr('lifecycle')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_date():
     bucket = get_new_bucket()
     rules = [
@@ -9104,10 +7823,6 @@ def test_lifecycle_set_date():
 @attr(operation='set lifecycle config with not iso8601 date')
 @attr('lifecycle')
 @attr(assertion='fails 400')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_invalid_date():
     bucket = get_new_bucket()
     rules = [
@@ -9129,11 +7844,6 @@ def test_lifecycle_set_invalid_date():
 @attr('lifecycle')
 @attr('lifecycle_expiration')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_expiration_date():
     bucket = get_new_bucket()
     _create_keys(bucket=bucket, keys=['past/foo', 'future/bar'])
@@ -9160,10 +7870,6 @@ def test_lifecycle_expiration_date():
 @attr(method='put')
 @attr(operation='set lifecycle config with noncurrent version expiration')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_noncurrent():
     bucket = get_new_bucket()
     rules = [
@@ -9186,11 +7892,6 @@ def test_lifecycle_set_noncurrent():
 @attr('lifecycle')
 @attr('lifecycle_expiration')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_noncur_expiration():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -9216,10 +7917,6 @@ def test_lifecycle_noncur_expiration():
 @attr(method='put')
 @attr(operation='set lifecycle config with delete marker expiration')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_deletemarker():
     bucket = get_new_bucket()
     rules = [
@@ -9238,10 +7935,6 @@ def test_lifecycle_set_deletemarker():
 @attr(method='put')
 @attr(operation='set lifecycle config with Filter')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_filter():
     bucket = get_new_bucket()
     rules = [
@@ -9260,10 +7953,6 @@ def test_lifecycle_set_filter():
 @attr(method='put')
 @attr(operation='set lifecycle config with empty Filter')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_empty_filter():
     bucket = get_new_bucket()
     rules = [
@@ -9287,11 +7976,6 @@ def test_lifecycle_set_empty_filter():
 @attr('lifecycle')
 @attr('lifecycle_expiration')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_deletemarker_expiration():
     bucket = get_new_bucket()
     check_configure_versioning_retry(bucket, True, "Enabled")
@@ -9320,10 +8004,6 @@ def test_lifecycle_deletemarker_expiration():
 @attr(method='put')
 @attr(operation='set lifecycle config with multipart expiration')
 @attr('lifecycle')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_set_multipart():
     bucket = get_new_bucket()
     rules = [
@@ -9348,11 +8028,6 @@ def test_lifecycle_set_multipart():
 @attr('lifecycle')
 @attr('lifecycle_expiration')
 @attr('fails_on_aws')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_lifecycle_multipart_expiration():
     bucket = get_new_bucket()
     key_names = ['test1/a', 'test2/']
@@ -9400,11 +8075,6 @@ def _test_encryption_sse_customer_write(file_size):
 @attr(operation='Test SSE-C encrypted transfer 1 byte')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encrypted_transfer_1b():
     _test_encryption_sse_customer_write(1)
 
@@ -9414,11 +8084,6 @@ def test_encrypted_transfer_1b():
 @attr(operation='Test SSE-C encrypted transfer 1KB')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encrypted_transfer_1kb():
     _test_encryption_sse_customer_write(1024)
 
@@ -9428,11 +8093,6 @@ def test_encrypted_transfer_1kb():
 @attr(operation='Test SSE-C encrypted transfer 1MB')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encrypted_transfer_1MB():
     _test_encryption_sse_customer_write(1024*1024)
 
@@ -9442,11 +8102,6 @@ def test_encrypted_transfer_1MB():
 @attr(operation='Test SSE-C encrypted transfer 13 bytes')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encrypted_transfer_13b():
     _test_encryption_sse_customer_write(13)
 
@@ -9456,11 +8111,6 @@ def test_encrypted_transfer_13b():
 @attr(operation='Test SSE-C encrypted does perform head properly')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_method_head():
     bucket = get_new_bucket()
     sse_client_headers = {
@@ -9484,11 +8134,6 @@ def test_encryption_sse_c_method_head():
 @attr(operation='write encrypted with SSE-C and read without SSE-C')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_present():
     bucket = get_new_bucket()
     sse_client_headers = {
@@ -9508,11 +8153,6 @@ def test_encryption_sse_c_present():
 @attr(operation='write encrypted with SSE-C but read with other key')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_other_key():
     bucket = get_new_bucket()
     sse_client_headers_A = {
@@ -9538,11 +8178,6 @@ def test_encryption_sse_c_other_key():
 @attr(operation='write encrypted with SSE-C, but md5 is bad')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_invalid_md5():
     bucket = get_new_bucket()
     sse_client_headers = {
@@ -9562,11 +8197,6 @@ def test_encryption_sse_c_invalid_md5():
 @attr(operation='write encrypted with SSE-C, but dont provide MD5')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_no_md5():
     bucket = get_new_bucket()
     sse_client_headers = {
@@ -9584,11 +8214,6 @@ def test_encryption_sse_c_no_md5():
 @attr(operation='declare SSE-C but do not provide key')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_no_key():
     bucket = get_new_bucket()
     sse_client_headers = {
@@ -9605,11 +8230,6 @@ def test_encryption_sse_c_no_key():
 @attr(operation='Do not declare SSE-C but provide key and MD5')
 @attr(assertion='operation successfull, no encryption')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_key_no_sse_c():
     bucket = get_new_bucket()
     sse_client_headers = {
@@ -9664,11 +8284,6 @@ def _check_content_using_range_enc(k, data, step, enc_headers=None):
 @attr(operation='complete multi-part upload')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_multipart_upload():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -9706,11 +8321,6 @@ def test_encryption_sse_c_multipart_upload():
 @attr(operation='multipart upload with bad key for uploading chunks')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_multipart_invalid_chunks_1():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -9739,11 +8349,6 @@ def test_encryption_sse_c_multipart_invalid_chunks_1():
 @attr(operation='multipart upload with bad md5 for chunks')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_multipart_invalid_chunks_2():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -9772,11 +8377,6 @@ def test_encryption_sse_c_multipart_invalid_chunks_2():
 @attr(operation='complete multi-part upload and download with bad key')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_multipart_bad_download():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -9815,11 +8415,6 @@ def test_encryption_sse_c_multipart_bad_download():
 @attr(operation='authenticated browser based upload via POST request')
 @attr(assertion='succeeds and returns written data')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_encryption_sse_c_post_object_authenticated_request():
     bucket = get_new_bucket()
 
@@ -9890,11 +8485,6 @@ def _test_sse_kms_customer_write(file_size, key_id = 'testkey-1'):
 @attr(operation='Test SSE-KMS encrypted transfer 1 byte')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_transfer_1b():
     _test_sse_kms_customer_write(1)
 
@@ -9904,11 +8494,6 @@ def test_sse_kms_transfer_1b():
 @attr(operation='Test SSE-KMS encrypted transfer 1KB')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_transfer_1kb():
     _test_sse_kms_customer_write(1024)
 
@@ -9918,11 +8503,6 @@ def test_sse_kms_transfer_1kb():
 @attr(operation='Test SSE-KMS encrypted transfer 1MB')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_transfer_1MB():
     _test_sse_kms_customer_write(1024*1024)
 
@@ -9932,11 +8512,6 @@ def test_sse_kms_transfer_1MB():
 @attr(operation='Test SSE-KMS encrypted transfer 13 bytes')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_transfer_13b():
     _test_sse_kms_customer_write(13)
 
@@ -9946,11 +8521,6 @@ def test_sse_kms_transfer_13b():
 @attr(operation='Test SSE-KMS encrypted does perform head properly')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_method_head():
     bucket = get_new_bucket()
     sse_kms_client_headers = {
@@ -9975,11 +8545,6 @@ def test_sse_kms_method_head():
 @attr(operation='write encrypted with SSE-KMS and read without SSE-KMS')
 @attr(assertion='operation success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_present():
     bucket = get_new_bucket()
     sse_kms_client_headers = {
@@ -9998,11 +8563,6 @@ def test_sse_kms_present():
 @attr(operation='declare SSE-KMS but do not provide key_id')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_no_key():
     bucket = get_new_bucket()
     sse_kms_client_headers = {
@@ -10019,11 +8579,6 @@ def test_sse_kms_no_key():
 @attr(operation='Do not declare SSE-KMS but provide key_id')
 @attr(assertion='operation successfull, no encryption')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_not_declared():
     bucket = get_new_bucket()
     sse_kms_client_headers = {
@@ -10041,11 +8596,6 @@ def test_sse_kms_not_declared():
 @attr(operation='complete KMS multi-part upload')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_multipart_upload():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -10082,11 +8632,6 @@ def test_sse_kms_multipart_upload():
 @attr(operation='multipart KMS upload with bad key_id for uploading chunks')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_multipart_invalid_chunks_1():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -10111,11 +8656,6 @@ def test_sse_kms_multipart_invalid_chunks_1():
 @attr(operation='multipart KMS upload with unexistent key_id for chunks')
 @attr(assertion='successful')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_multipart_invalid_chunks_2():
     bucket = get_new_bucket()
     key = "multipart_enc"
@@ -10140,11 +8680,6 @@ def test_sse_kms_multipart_invalid_chunks_2():
 @attr(operation='authenticated KMS browser based upload via POST request')
 @attr(assertion='succeeds and returns written data')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_post_object_authenticated_request():
     bucket = get_new_bucket()
 
@@ -10193,11 +8728,6 @@ def test_sse_kms_post_object_authenticated_request():
 @attr(operation='Test SSE-KMS encrypted transfer 1 byte')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_barb_transfer_1b():
     if 'kms_keyid' not in config['main']:
         raise SkipTest
@@ -10209,11 +8739,6 @@ def test_sse_kms_barb_transfer_1b():
 @attr(operation='Test SSE-KMS encrypted transfer 1KB')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_barb_transfer_1kb():
     if 'kms_keyid' not in config['main']:
         raise SkipTest
@@ -10225,11 +8750,6 @@ def test_sse_kms_barb_transfer_1kb():
 @attr(operation='Test SSE-KMS encrypted transfer 1MB')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_barb_transfer_1MB():
     if 'kms_keyid' not in config['main']:
         raise SkipTest
@@ -10241,11 +8761,6 @@ def test_sse_kms_barb_transfer_1MB():
 @attr(operation='Test SSE-KMS encrypted transfer 13 bytes')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_barb_transfer_13b():
     if 'kms_keyid' not in config['main']:
         raise SkipTest
@@ -10256,11 +8771,6 @@ def test_sse_kms_barb_transfer_13b():
 @attr(operation='write encrypted with SSE-KMS and read with SSE-KMS')
 @attr(assertion='operation fails')
 @attr('encryption')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_sse_kms_read_declare():
     bucket = get_new_bucket()
     sse_kms_client_headers = {
@@ -10281,10 +8791,6 @@ def _make_arn_resource(path="*"):
 @attr(operation='Test Bucket Policy')
 @attr(assertion='succeeds')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy():
     bucket = get_new_bucket()
     key = bucket.new_key('asdf')
@@ -10323,10 +8829,6 @@ def test_bucket_policy():
 @attr(operation='Test Bucket Policy and ACL')
 @attr(assertion='fails')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_acl():
     bucket = get_new_bucket()
     key = bucket.new_key('asdf')
@@ -10363,17 +8865,11 @@ def test_bucket_policy_acl():
     eq(e.reason, 'Forbidden')
     eq(e.error_code, 'AccessDenied')
 
-# MalformedPolicy
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='Test Bucket Policy for a user belonging to a different tenant')
 @attr(assertion='succeeds')
 @attr('bucket-policy')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_different_tenant():
     bucket = get_new_bucket()
     key = bucket.new_key('asdf')
@@ -10413,11 +8909,6 @@ def test_bucket_policy_different_tenant():
 @attr(operation='Test Bucket Policy on another bucket')
 @attr(assertion='succeeds')
 @attr('bucket-policy')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_another_bucket():
     bucket1 = get_new_bucket()
     bucket2 = get_new_bucket()
@@ -10462,10 +8953,6 @@ def test_bucket_policy_another_bucket():
 @attr(method='put')
 @attr(operation='Test put condition operator end with ifExists')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_set_condition_operator_end_with_IfExists():
     bucket = _create_keys(keys=['foo'])
     policy = '''{
@@ -10502,10 +8989,6 @@ def test_bucket_policy_set_condition_operator_end_with_IfExists():
 @attr(method='get')
 @attr(operation='Test listbucket with prefix')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_list_bucket_with_prefix():
     bucket = _create_keys(keys=['foo','folder/foo1','folder/foo2','folder/foo3','foo2'])
     conditional = {"StringEquals": {
@@ -10539,10 +9022,6 @@ def test_bucket_policy_list_bucket_with_prefix():
 @attr(method='get')
 @attr(operation='Test listbucket with maxkeys')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_list_bucket_with_maxkeys():
     bucket = _create_keys(keys=['key'+str(i) for i in range(8)])
 
@@ -10584,10 +9063,6 @@ def test_bucket_policy_list_bucket_with_maxkeys():
 @attr(method='get')
 @attr(operation='Test listbucket with delimiter')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_list_bucket_with_delimiter():
     bucket = _create_keys(keys=['key/'+str(i) for i in range(5)])
 
@@ -10631,11 +9106,6 @@ def test_bucket_policy_list_bucket_with_delimiter():
 @attr(method='put')
 @attr(operation='Test put bucket acl with canned acl conditionals')
 @attr('bucket-policy')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_list_put_bucket_acl_canned_acl():
     bucket = _create_keys(keys=['key/'+str(i) for i in range(5)])
 
@@ -10669,10 +9139,6 @@ def test_bucket_policy_list_put_bucket_acl_canned_acl():
 @attr(method='put')
 @attr(operation='Test put bucket acl with acl grant headers')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_list_put_bucket_acl_grants():
     bucket = _create_keys(keys=['key/'+str(i) for i in range(5)])
 
@@ -10791,10 +9257,6 @@ def _create_simple_tagset(count):
 @attr(operation='Test Get/PutObjTagging output')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_obj_tagging():
     bucket, key = _create_key_with_random_content('testputtags')
     input_tagset = _create_simple_tagset(2)
@@ -10808,10 +9270,6 @@ def test_get_obj_tagging():
 @attr(operation='Test HEAD obj tagging output')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_obj_head_tagging():
     bucket, key = _create_key_with_random_content('testputtags')
     count = 2
@@ -10828,10 +9286,6 @@ def test_get_obj_head_tagging():
 @attr(operation='Test Put max allowed tags')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_max_tags():
     bucket, key = _create_key_with_random_content('testputmaxtags')
     input_tagset = _create_simple_tagset(10)
@@ -10846,11 +9300,6 @@ def test_put_max_tags():
 @attr(operation='Test Put max allowed tags')
 @attr(assertion='fails')
 @attr('tagging')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_excess_tags():
     bucket, key = _create_key_with_random_content('testputexcesstags')
     input_tagset = _create_simple_tagset(11)
@@ -10867,10 +9316,6 @@ def test_put_excess_tags():
 @attr(operation='Test Put max allowed k-v size')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_max_kvsize_tags():
     bucket, key = _create_key_with_random_content('testputmaxkeysize')
     input_tagset = S3TestTagSet()
@@ -10889,10 +9334,6 @@ def test_put_max_kvsize_tags():
 @attr(operation='Test exceed key size')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_excess_key_tags():
     bucket, key = _create_key_with_random_content('testputexcesskeytags')
     input_tagset = S3TestTagSet()
@@ -10913,10 +9354,6 @@ def test_put_excess_key_tags():
 @attr(operation='Test exceed val size')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_excess_val_tags():
     bucket, key = _create_key_with_random_content('testputexcessvaltags')
     input_tagset = S3TestTagSet()
@@ -10937,10 +9374,6 @@ def test_put_excess_val_tags():
 @attr(operation='Test PUT modifies existing tags')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_modify_tags():
     bucket, key = _create_key_with_random_content('testputmodifytags')
     input_tagset = S3TestTagSet()
@@ -10965,10 +9398,6 @@ def test_put_modify_tags():
 @attr(operation='Test Delete tags')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_delete_tags():
     bucket, key = _create_key_with_random_content('testputmodifytags')
     input_tagset = _create_simple_tagset(2)
@@ -10993,11 +9422,6 @@ def test_put_delete_tags():
 @attr(operation='anonymous browser based upload via POST request')
 @attr('tagging')
 @attr(assertion='succeeds and returns written data')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_tags_anonymous_request():
     bucket = get_new_bucket()
     url = _get_post_url(s3.main, bucket)
@@ -11026,10 +9450,6 @@ def test_post_object_tags_anonymous_request():
 @attr(operation='authenticated browser based upload via POST request')
 @attr('tagging')
 @attr(assertion='succeeds and returns written data')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_post_object_tags_authenticated_request():
     bucket = get_new_bucket()
 
@@ -11073,10 +9493,6 @@ def test_post_object_tags_authenticated_request():
 @attr(operation='Test PutObj with tagging headers')
 @attr(assertion='success')
 @attr('tagging')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_obj_with_tags():
     input_tagset = S3TestTagSet()
     input_tagset.add_tag('foo','bar')
@@ -11101,10 +9517,6 @@ def test_put_obj_with_tags():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_get_tags_acl_public():
     bucket, key = _create_key_with_random_content('testputtagsacl')
 
@@ -11126,10 +9538,6 @@ def test_get_tags_acl_public():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_put_tags_acl_public():
     bucket, key = _create_key_with_random_content('testputtagsacl')
 
@@ -11151,10 +9559,6 @@ def test_put_tags_acl_public():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_delete_tags_obj_public():
     bucket, key = _create_key_with_random_content('testputtagsacl')
 
@@ -11177,10 +9581,6 @@ def test_delete_tags_obj_public():
 @attr(method='put')
 @attr(operation='test whether a correct version-id returned')
 @attr(assertion='version-id is same as bucket list')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_bucket_atomic_upload_return_version_id():
     # for versioning-enabled-bucket, an non-empty version-id should return
     bucket = get_new_bucket()
@@ -11212,10 +9612,6 @@ def test_versioning_bucket_atomic_upload_return_version_id():
 @attr(method='put')
 @attr(operation='test whether a correct version-id returned')
 @attr(assertion='version-id is same as bucket list')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_versioning_bucket_multipart_upload_return_version_id():
     content_type='text/bla'
     objlen = 30 * 1024 * 1024
@@ -11252,10 +9648,6 @@ def test_versioning_bucket_multipart_upload_return_version_id():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_get_obj_existing_tag():
 
     bucket = _create_keys(keys=['publictag','privatetag','invalidtag'])
@@ -11306,10 +9698,6 @@ def test_bucket_policy_get_obj_existing_tag():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_get_obj_tagging_existing_tag():
 
     bucket = _create_keys(keys=['publictag','privatetag','invalidtag'])
@@ -11359,17 +9747,13 @@ def test_bucket_policy_get_obj_tagging_existing_tag():
     eq(res.status, 403)
 
 
+
 @attr(resource='object')
 @attr(method='get')
 @attr(operation='Test ExistingObjectTag conditional on put object tagging')
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_tagging_existing_tag():
 
     bucket = _create_keys(keys=['publictag','privatetag','invalidtag'])
@@ -11428,10 +9812,6 @@ def test_bucket_policy_put_obj_tagging_existing_tag():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_copy_source():
 
     bucket_source = _create_keys(keys=['public/foo', 'public/bar', 'private/foo'])
@@ -11475,10 +9855,6 @@ def test_bucket_policy_put_obj_copy_source():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_copy_source_meta():
 
     bucket_source = _create_keys(keys=['public/foo', 'public/bar'])
@@ -11520,10 +9896,6 @@ def test_bucket_policy_put_obj_copy_source_meta():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_acl():
 
     bucket = get_new_bucket()
@@ -11572,10 +9944,6 @@ def test_bucket_policy_put_obj_acl():
 @attr(operation='Test put obj with amz-grant back to bucket-owner')
 @attr(assertion='success')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_grant():
 
     bucket1 = get_new_bucket()
@@ -11635,12 +10003,7 @@ def test_bucket_policy_put_obj_grant():
 @attr(operation='Deny put obj requests without encryption')
 @attr(assertion='success')
 @attr('encryption')
-@attr('skip_for_splunk')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_enc():
 
     bucket = get_new_bucket()
@@ -11689,11 +10052,6 @@ def test_bucket_policy_put_obj_enc():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@attr('skip_for_splunk')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_put_obj_request_obj_tag():
 
     bucket = get_new_bucket()
@@ -11726,10 +10084,6 @@ def test_bucket_policy_put_obj_request_obj_tag():
 @attr(assertion='success')
 @attr('tagging')
 @attr('bucket-policy')
-@nose.with_setup(
-    setup=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    teardown=lambda: nuke_prefixed_buckets(prefix=get_prefix()),
-    )
 def test_bucket_policy_get_obj_acl_existing_tag():
 
     bucket = _create_keys(keys=['publictag','privatetag','invalidtag'])
