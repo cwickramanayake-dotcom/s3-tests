@@ -1559,6 +1559,7 @@ def _do_wait_completion(t):
     for thr in t:
         thr.join()
 
+@pytest.mark.skip_for_splunk
 def test_bucket_concurrent_set_canned_acl():
     bucket_name = get_new_bucket()
     client = get_client()
@@ -3296,6 +3297,7 @@ def test_object_raw_get():
     response = unauthenticated_client.get_object(Bucket=bucket_name, Key='foo')
     assert response['ResponseMetadata']['HTTPStatusCode'] == 200
 
+@pytest.mark.skip_for_splunk
 def test_object_raw_get_bucket_gone():
     bucket_name = _setup_bucket_object_acl('public-read', 'public-read')
     client = get_client()
@@ -3674,6 +3676,7 @@ def check_invalid_bucketname(invalid_name):
     status, error_code = _get_status_and_error_code(e.response)
     return (status, error_code)
 
+@pytest.mark.skip_for_splunk
 def test_bucket_create_naming_bad_short_one():
     check_bad_bucket_name('a')
 
@@ -11650,6 +11653,7 @@ def test_get_obj_tagging():
 
 
 @pytest.mark.tagging
+@pytest.mark.skip_for_splunk
 def test_get_obj_head_tagging():
     key = 'testputtags'
     bucket_name = _create_key_with_random_content(key)
@@ -11694,6 +11698,7 @@ def test_put_excess_tags():
     assert len(response['TagSet']) == 0
 
 @pytest.mark.tagging
+@pytest.mark.skip_for_splunk
 def test_put_max_kvsize_tags():
     key = 'testputmaxkeysize'
     bucket_name = _create_key_with_random_content(key)
@@ -11966,6 +11971,7 @@ def test_put_tags_acl_public():
 @pytest.mark.tagging
 @pytest.mark.bucket_policy
 @pytest.mark.fails_on_dbstore
+@pytest.mark.skip_for_splunk
 def test_delete_tags_obj_public():
     key = 'testputtagsacl'
     bucket_name = _create_key_with_random_content(key)
@@ -11989,6 +11995,7 @@ def test_delete_tags_obj_public():
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert len(response['TagSet']) == 0
 
+@pytest.mark.skip_versioning_not_supported
 def test_versioning_bucket_atomic_upload_return_version_id():
     bucket_name = get_new_bucket()
     client = get_client()

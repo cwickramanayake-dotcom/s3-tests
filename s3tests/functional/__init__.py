@@ -101,9 +101,20 @@ def nuke_bucket(client, bucket):
 
     # list and delete objects in batches
     for objects in list_versions(client, bucket, batch_size):
-        delete = client.delete_objects(Bucket=bucket,
-                Delete={'Objects': objects, 'Quiet': True},
-                BypassGovernanceRetention=True)
+        try:
+            delete = client.delete_objects(Bucket=bucket,
+                    Delete={'Objects': objects, 'Quiet': True},
+                    BypassGovernanceRetention=True)
+        except ClientError as e:
+            # Some backends don't support BypassGovernanceRetention unless
+            # Object Lock is enabled on the bucket. Retry without the flag
+            # when the service rejects it (InvalidArgument) to allow cleanup.
+            err_code = e.response.get('Error', {}).get('Code', '')
+            if err_code in ('InvalidArgument',):
+                delete = client.delete_objects(Bucket=bucket,
+                        Delete={'Objects': objects, 'Quiet': True})
+            else:
+                raise
 
         # check for object locks on 403 AccessDenied errors
         for err in delete.get('Errors', []):
@@ -132,9 +143,17 @@ bucket cleanup'.format(bucket, delta.total_seconds()))
             time.sleep(delta.total_seconds())
 
         for objects in list_versions(client, bucket, batch_size):
-            client.delete_objects(Bucket=bucket,
-                    Delete={'Objects': objects, 'Quiet': True},
-                    BypassGovernanceRetention=True)
+            try:
+                client.delete_objects(Bucket=bucket,
+                        Delete={'Objects': objects, 'Quiet': True},
+                        BypassGovernanceRetention=True)
+            except ClientError as e:
+                err_code = e.response.get('Error', {}).get('Code', '')
+                if err_code in ('InvalidArgument',):
+                    client.delete_objects(Bucket=bucket,
+                            Delete={'Objects': objects, 'Quiet': True})
+                else:
+                    raise
 
     client.delete_bucket(Bucket=bucket)
 
@@ -200,8 +219,21 @@ def configure():
 
     # vars from the DEFAULT section
     config.default_host = defaults.get("host")
-    config.default_port = int(defaults.get("port"))
-    config.default_is_secure = cfg.getboolean('DEFAULT', "is_secure")
+
+    # read is_secure first (fall back to False) so we can pick a sensible
+    # default port when the port entry is missing from the config file.
+    try:
+        config.default_is_secure = cfg.getboolean('DEFAULT', "is_secure")
+    except (configparser.NoOptionError, configparser.NoSectionError):
+        config.default_is_secure = False
+
+    port_str = defaults.get("port")
+    if port_str is None:
+        # config comment suggests default port is 80; when TLS is enabled,
+        # prefer 443 as the conventional HTTPS port.
+        config.default_port = 443 if config.default_is_secure else 80
+    else:
+        config.default_port = int(port_str)
 
     proto = 'https' if config.default_is_secure else 'http'
     config.default_endpoint = "%s://%s:%d" % (proto, config.default_host, config.default_port)

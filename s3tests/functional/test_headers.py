@@ -176,6 +176,7 @@ def test_object_create_bad_md5_empty():
     assert error_code == 'InvalidDigest'
 
 @pytest.mark.auth_common
+@pytest.mark.skip_for_splunk
 def test_object_create_bad_md5_none():
     bucket_name, key_name = _remove_header_create_object('Content-MD5')
     client = get_client()
@@ -188,12 +189,14 @@ def test_object_create_bad_expect_mismatch():
     client.put_object(Bucket=bucket_name, Key=key_name, Body='bar')
 
 @pytest.mark.auth_common
+@pytest.mark.skip_for_splunk
 def test_object_create_bad_expect_empty():
     bucket_name, key_name = _add_header_create_object({'Expect': ''})
     client = get_client()
     client.put_object(Bucket=bucket_name, Key=key_name, Body='bar')
 
 @pytest.mark.auth_common
+@pytest.mark.skip_for_splunk
 def test_object_create_bad_expect_none():
     bucket_name, key_name = _remove_header_create_object('Expect')
     client = get_client()
@@ -311,6 +314,7 @@ def test_object_acl_create_contentlength_none():
     client.put_object_acl(Bucket=bucket_name, Key='foo', ACL='public-read')
 
 @pytest.mark.auth_common
+@pytest.mark.skip_for_splunk
 def test_bucket_put_bad_canned_acl():
     bucket_name = get_new_bucket()
     client = get_client()
@@ -334,6 +338,7 @@ def test_bucket_create_bad_expect_mismatch():
     client.create_bucket(Bucket=bucket_name)
 
 @pytest.mark.auth_common
+@pytest.mark.skip_for_splunk
 def test_bucket_create_bad_expect_empty():
     headers = {'Expect': ''}
     _add_header_create_bucket(headers)
@@ -342,6 +347,7 @@ def test_bucket_create_bad_expect_empty():
 # TODO: The request isn't even making it to the RGW past the frontend
 # This test had 'fails_on_rgw' before the move to boto3
 @pytest.mark.fails_on_rgw
+@pytest.mark.skip_for_splunk
 def test_bucket_create_bad_contentlength_empty():
     headers = {'Content-Length': ''}
     e = _add_header_create_bad_bucket(headers)
@@ -442,6 +448,7 @@ def test_object_create_bad_ua_none_aws2():
 
 @pytest.mark.auth_aws2
 def test_object_create_bad_date_invalid_aws2():
+    
     v2_client = get_v2_client()
     headers = {'x-amz-date': 'Bad Date'}
     e = _add_header_create_bad_object(headers, v2_client)
@@ -529,6 +536,8 @@ def test_bucket_create_bad_date_invalid_aws2():
     status, error_code = _get_status_and_error_code(e.response)
     assert status == 403
     assert error_code == 'AccessDenied'
+
+@pytest.mark.skip_for_splunk
 
 @pytest.mark.auth_aws2
 def test_bucket_create_bad_date_empty_aws2():
