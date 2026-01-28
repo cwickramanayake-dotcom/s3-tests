@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# run_core_s3_tests.sh
-# Run a curated subset of s3-tests (core S3 operations) while excluding
-# IAM/ACL/encryption/STS/webidentity/Select/logging/checksum tests and
-# a list of known failing/negative tests for this backend.
 # Usage:
 #   source .venv/bin/activate
 #   ./run_core_s3_tests.sh
@@ -126,7 +122,7 @@ exit ${EXIT_STATUS}
 set -euo pipefail
 
 # Run core S3 operation tests only. Excludes ACL/IAM/STS/webidentity/encryption/S3Select/logging/checksum related tests
-# and a curated list of known failing/negative tests. Usage:
+
 #   source .venv/bin/activate
 #   ./run_core_s3_tests.sh
 
@@ -174,7 +170,7 @@ DESELECT_MODULES=(
   "s3tests/functional/test_headers.py"
 )
 
-# Per-test deselects (from failure lists) - add more as needed
+
 DESELECT_TESTS=(
   "s3tests/functional/test_s3.py::test_put_object_ifnonmatch_failed"
   "s3tests/functional/test_s3.py::test_object_raw_get_bucket_gone"
