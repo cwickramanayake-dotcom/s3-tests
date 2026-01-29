@@ -1,5 +1,5 @@
 ========================
- S3 compatibility tests
+ Splunk S3 compatibility tests
 ========================
 
 This is a set of unofficial Amazon AWS S3 compatibility
@@ -24,8 +24,8 @@ Once you have that file copied and edited, you can run the tests the same
 way upstream invokes them with a Splunk-specific configuration named
 ``splunk.conf``::
 
-  # run using the repository helper (applies the Splunk-specific filters; no -m needed)
-  S3TEST_CONF=splunk.conf ./run_core_s3_tests.sh
+  # run using the repository helper
+ ./run_core_s3_tests.sh
 
   # or run pytest directly (when running pytest directly you must apply the upstream skip filter)
   S3TEST_CONF=splunk.conf pytest -q s3tests/functional -m "not skip_for_splunk"
@@ -206,7 +206,7 @@ to match your test endpoint and credentials.
   ; - Fill `tenant` for multi-tenant RGW testing.
 
 
-Running the focused core S3 tests (run_core_s3_tests.sh)
+Running the core S3 tests (run_core_s3_tests.sh)
 ------------------------------------------------------
 
 The repository ships a helper script `run_core_s3_tests.sh` that runs a curated subset of the
