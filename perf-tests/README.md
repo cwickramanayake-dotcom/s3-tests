@@ -419,23 +419,3 @@ Run with verbose logging:
 ```bash
 ./warp_s3_benchmark.sh --target aws --verbose
 ```
-
-### Validation
-
-Check your setup:
-```bash
-./validate_setup.sh
-```
-
-## �📞 Support
-
-- **WARP Documentation:** https://github.com/minio/warp
-- **AWS S3 Performance Guide:** https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html
-
-## 📄 License
-
-This performance testing framework is part of the s3-tests project.
-
----
-
-**Ready to benchmark?** Start with `./validate_setup.sh` then follow the Quick Start guide!
